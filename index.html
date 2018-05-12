@@ -1,14 +1,271 @@
 <!DOCTYPE html>
 <html>
+<title>Portfolio Builder</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    html,
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Roboto", sans-serif;
+    }
 
-<head>
-    <title>
-        Portfolio Builder
-    </title>
-</head>
+    .centered {
+        margin: 0 auto;
+        max-width: 900px;
+    }
+
+    .btn {
+        background-color: teal;
+        border: none;
+        color: white;
+        padding: 6px 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* Darker background on mouse-over */
+
+    .btn:hover {
+        background-color: rgb(0, 84, 84);
+    }
+
+    table td,
+    table td * {
+        vertical-align: top;
+    }
+</style>
 
 <body>
-    WiP...
+
+    <!-- Navbar -->
+    <div class="w3-top">
+        <div class="w3-row w3-padding w3-black">
+            <div class="centered">
+                <div class="w3-col s3">
+                    <a href="#" class="w3-button w3-block w3-black">Home</a>
+                </div>
+                <div class="w3-col s3">
+                    <a href="#started" class="w3-button w3-block w3-black">Getting Started</a>
+                </div>
+                <div class="w3-col s3">
+                    <a href="#builder" class="w3-button w3-block w3-black">Builder</a>
+                </div>
+                <div class="w3-col s3">
+                    <a href="#about" class="w3-button w3-block w3-black">About</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w3-main centered">
+
+        <div class="w3-row w3-padding-64">
+            <div class="w3-container">
+                <h1 class="w3-text-teal" id="getting-started">Getting Started</h1>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="w3-row">
+            <div class="w3-container">
+                <h1 class="w3-text-teal" id="builder">Builder</h1>
+                <hr/>
+
+                <p>Import your XML portfolio:</p>
+                <input type="file" id="file-input" />
+                <button id="load-xml" class="btn">
+                    <i class="fa fa-upload"></i> Load
+                </button>
+
+                <hr/>
+
+                <div id="readroot" style="display: none">
+
+                    <input type="button" value="Remove review" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" />
+                    <br/>
+                    <br/>
+
+                    <input name="cd" value="title" />
+
+                    <select name="rankingsel">
+                        <option>Rating</option>
+                        <option value="excellent">Excellent</option>
+                        <option value="good">Good</option>
+                        <option value="ok">OK</option>
+                        <option value="poor">Poor</option>
+                        <option value="bad">Bad</option>
+                    </select>
+                    <br />
+                    <br />
+
+                    <textarea rows="5" cols="20" name="review">Short review</textarea>
+                    <br />Radio buttons included to test them in Explorer:
+                    <br />
+                    <input type="radio" name="something" value="test1" />Test 1
+                    <br />
+                    <input type="radio" name="something" value="test2" />Test 2
+
+                </div>
+
+                <form id="form">
+                    <table>
+                        <tr>
+                            <h2>General Info</h2>
+                        </tr>
+                        <tr>
+                            <td>Name:</td>
+                            <td>
+                                <input type="text" name="name" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Email:</td>
+                            <td>
+                                <input type="text" name="email" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Headline(?):</td>
+                            <td>
+                                <input type="text" name="headline" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Summary:</td>
+                            <td>
+                                <textarea name="summary" cols="30" rows="5"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>Social</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Other:</td>
+                            <td>
+                                <input type="text" name="name" maxlength="10" />
+                            </td>
+                        </tr>
+                    </table>
+                    <span id="writeroot"></span>
+
+                    <input type="button" onClick="moreFields()" value="Give me more fields!" />
+                    <input type="submit" value="Download XML" />
+
+                </form>
+            </div>
+        </div>
+
+        <div class="w3-row">
+            <div class="w3-container">
+                <h1 class="w3-text-teal" id="about">About</h1>
+                <p>Online tool for creating your portfolio in XML format with multiple export options, using XSL transformations.
+                    You can check out project's source on github
+                    <a href="https://github.com/Haaxor1689/PortfolioBuilder">here</a>.</p>
+            </div>
+        </div>
+
+        <!-- END MAIN -->
+    </div>
+
+    <footer id="myFooter">
+        <div class="w3-container w3-theme-l1">
+            <div class="centered">
+                <p>Powered by
+                    <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script>
+
+    <script>
+        var schemaData;
+        fetch('https://haaxor1689.github.io/PortfolioBuilder/portfolioSchema.xsd')
+            .then(response => response.text())
+            .then(text => {
+                schemaData = text;
+            });
+
+        var xmlData;
+        function readSingleFile(e) {
+            var file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                xmlData = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+        document.getElementById("file-input").addEventListener("change", readSingleFile, false);
+
+        var counter = 0;
+        function moreFields() {
+            counter++;
+            var newFields = document.getElementById("readroot").cloneNode(true);
+            newFields.id = '';
+            newFields.style.display = "block";
+            var newField = newFields.childNodes;
+            for (var i = 0; i < newField.length; i++) {
+                var theName = newField[i].name
+                if (theName) newField[i].name = theName + counter;
+            }
+            var insertHere = document.getElementById("writeroot");
+            insertHere.parentNode.insertBefore(newFields, insertHere);
+        }
+
+        $('#load-xml').click(function () {
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(xmlData, "text/xml");
+
+            $("[name=name]").val(xmlDoc.getElementsByTagName("name")[0].childNodes[0].nodeValue);
+            $("[name=email]").val(xmlDoc.getElementsByTagName("email")[0].childNodes[0].nodeValue);
+            $("[name=headline]").val(xmlDoc.getElementsByTagName("headline")[0].getElementsByTagName("text")[0].childNodes[0].nodeValue);
+            $("[name=summary]").val(xmlDoc.getElementsByTagName("summary")[0].getElementsByTagName("text")[0].childNodes[0].nodeValue);
+
+        });
+
+        $('form').submit(function (ev) {
+            ev.preventDefault(); //I keep form from submitting
+            var xmlDoc = document.implementation.createDocument(null, "portfolio");
+
+            var portfolio = xmlDoc.getElementsByTagName("portfolio")[0];
+            appendElement(xmlDoc, portfolio, "name", $("[name=name]").val());
+            appendElement(xmlDoc, portfolio, "email", $("[name=email]").val());
+            appendElement(xmlDoc, portfolio, "headline", $("[name=headline]").val());
+            appendElement(xmlDoc, portfolio, "summary", $("[name=summary]").val());
+
+            var serializer = new XMLSerializer();
+            var xmlString = serializer.serializeToString(xmlDoc);
+            saveFile("tst.xml", xmlString)
+        });
+
+        function saveFile(filename, filedata) {
+            var blob = new Blob([filedata], { type: "text/plain;charset=utf-8" });
+            saveAs(blob, filename);
+        }
+
+        function appendElement(xmlDoc, parent, name, text) {
+            var newel = xmlDoc.createElement(name);
+            var newtext = xmlDoc.createTextNode(text);
+            newel.appendChild(newtext);
+            parent.appendChild(newel);
+        }
+    </script>
 </body>
 
 </html>

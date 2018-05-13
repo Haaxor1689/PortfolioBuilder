@@ -152,9 +152,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Other:</td>
+                            <td>Linkedin:</td>
                             <td>
-                                <input type="text" name="name" maxlength="10" />
+                                <input type="text" name="linkedin" maxlength="10" />
                             </td>
                         </tr>
                     </table>
@@ -190,14 +190,14 @@
     </footer>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script>
-
+    <script src="serialization.js"></script>
     <script>
-        var schemaData;
-        fetch('https://haaxor1689.github.io/PortfolioBuilder/portfolioSchema.xsd')
-            .then(response => response.text())
-            .then(text => {
-                schemaData = text;
-            });
+        // var schemaData;
+        // fetch('https://haaxor1689.github.io/PortfolioBuilder/portfolioSchema.xsd')
+        //     .then(response => response.text())
+        //     .then(text => {
+        //         schemaData = text;
+        //     });
 
         var xmlData;
         function readSingleFile(e) {
@@ -232,11 +232,10 @@
             var parser = new DOMParser();
             var xmlDoc = parser.parseFromString(xmlData, "text/xml");
 
-            $("[name=name]").val(xmlDoc.getElementsByTagName("name")[0].childNodes[0].nodeValue);
-            $("[name=email]").val(xmlDoc.getElementsByTagName("email")[0].childNodes[0].nodeValue);
-            $("[name=headline]").val(xmlDoc.getElementsByTagName("headline")[0].getElementsByTagName("text")[0].childNodes[0].nodeValue);
-            $("[name=summary]").val(xmlDoc.getElementsByTagName("summary")[0].getElementsByTagName("text")[0].childNodes[0].nodeValue);
-
+            getElement(xmlDoc, 'name', false);
+            getElement(xmlDoc, 'email', false);
+            getLocalizedElement(xmlDoc, 'headline', true);
+            getLocalizedElement(xmlDoc, 'summary', false);
         });
 
         $('form').submit(function (ev) {
@@ -244,10 +243,22 @@
             var xmlDoc = document.implementation.createDocument(null, "portfolio");
 
             var portfolio = xmlDoc.getElementsByTagName("portfolio")[0];
-            appendElement(xmlDoc, portfolio, "name", $("[name=name]").val());
-            appendElement(xmlDoc, portfolio, "email", $("[name=email]").val());
-            appendElement(xmlDoc, portfolio, "headline", $("[name=headline]").val());
-            appendElement(xmlDoc, portfolio, "summary", $("[name=summary]").val());
+            if (!appendElement(xmlDoc, portfolio, "name", false)) return;
+            if (!appendElement(xmlDoc, portfolio, "email", false)) return;
+            if (!appendLocalizedElement(xmlDoc, portfolio, "headline", true)) return;
+            if (!appendLocalizedElement(xmlDoc, portfolio, "summary", false)) return;
+
+            var social = xmlDoc.createElement("social");
+            portfolio.appendChild(social);
+            if (!appendElement(xmlDoc, social, "linkedin", true)) return;;
+            if (!appendElement(xmlDoc, social, "facebook", true)) return;
+            if (!appendElement(xmlDoc, social, "instagram", true)) return;
+            if (!appendElement(xmlDoc, social, "youtube", true)) return;
+            if (!appendElement(xmlDoc, social, "twitch", true)) return;
+            if (!appendElement(xmlDoc, social, "twitter", true)) return;
+            if (!appendElement(xmlDoc, social, "stackoverflow", true)) return;
+            if (!appendElement(xmlDoc, social, "github", true)) return;
+            if (!appendElement(xmlDoc, social, "pinterest", true)) return;
 
             var serializer = new XMLSerializer();
             var xmlString = serializer.serializeToString(xmlDoc);
@@ -257,13 +268,6 @@
         function saveFile(filename, filedata) {
             var blob = new Blob([filedata], { type: "text/plain;charset=utf-8" });
             saveAs(blob, filename);
-        }
-
-        function appendElement(xmlDoc, parent, name, text) {
-            var newel = xmlDoc.createElement(name);
-            var newtext = xmlDoc.createTextNode(text);
-            newel.appendChild(newtext);
-            parent.appendChild(newel);
         }
     </script>
 </body>

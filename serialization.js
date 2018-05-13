@@ -1,4 +1,3 @@
-
 function appendElement(xmlDoc, parent, name, isOptional) {
   var text = $('[name=' + name + ']').val();
   if (text == null || text.trim() == '') {

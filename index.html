@@ -152,11 +152,67 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Linkedin:</td>
+                            <td>LinkedIn:</td>
                             <td>
-                                <input type="text" name="linkedin" maxlength="10" />
+                                <input type="text" name="linkedin" maxlength="20" />
                             </td>
                         </tr>
+                        <tr>
+                            <td>Facebook:</td>
+                            <td>
+                                <input type="text" name="facebook" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Instagram:</td>
+                            <td>
+                                <input type="text" name="instagram" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Youtube:</td>
+                            <td>
+                                <input type="text" name="youtube" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Twitter:</td>
+                            <td>
+                                <input type="text" name="twitter" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Twitch:</td>
+                            <td>
+                                <input type="text" name="twitch" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Stack Overflow:</td>
+                            <td>
+                                <input type="text" name="stackoverflow" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Github:</td>
+                            <td>
+                                <input type="text" name="github" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pinterest:</td>
+                            <td>
+                                <input type="text" name="pinterest" maxlength="20" />
+                            </td>
+                        </tr>
+                        <tr id="social-other-insert"></tr>
+                        <tr>
+                            <td>Other:</td>
+                            <td>
+                                <input type="button" id="social-other-add" value="+" class="btn" />
+                            </td>
+                        </tr>
+
                     </table>
                     <span id="writeroot"></span>
 
@@ -213,6 +269,10 @@
         }
         document.getElementById("file-input").addEventListener("change", readSingleFile, false);
 
+        function getElementsByXpath(xmlDoc, path) {
+            return xmlDoc.evaluate(path, xmlDoc, null, XPathResult.ANY_TYPE, null);
+        }
+
         var counter = 0;
         function moreFields() {
             counter++;
@@ -228,6 +288,8 @@
             insertHere.parentNode.insertBefore(newFields, insertHere);
         }
 
+        var socialNames = ["linkedin", "facebook", "instagram", "youtube", "twitch", "twitter", "stackoverflow", "github", "pinterest"];
+
         $('#load-xml').click(function () {
             var parser = new DOMParser();
             var xmlDoc = parser.parseFromString(xmlData, "text/xml");
@@ -236,6 +298,16 @@
             getElement(xmlDoc, 'email', false);
             getLocalizedElement(xmlDoc, 'headline', true);
             getLocalizedElement(xmlDoc, 'summary', false);
+            socialNames.forEach(function (item) {
+                if (!getElement(xmlDoc, item, true)) return;
+            })
+            var otherSocial = getElementsByXpath(xmlDoc, '//social/link');
+            var iter = otherSocial.iterateNext();
+            while (iter) {
+                addSocialOther();
+                $('[name=link' + socialOtherCount + ']').val(iter.getAttribute('url'));
+                iter = otherSocial.iterateNext();
+            }
         });
 
         $('form').submit(function (ev) {
@@ -250,15 +322,9 @@
 
             var social = xmlDoc.createElement("social");
             portfolio.appendChild(social);
-            if (!appendElement(xmlDoc, social, "linkedin", true)) return;;
-            if (!appendElement(xmlDoc, social, "facebook", true)) return;
-            if (!appendElement(xmlDoc, social, "instagram", true)) return;
-            if (!appendElement(xmlDoc, social, "youtube", true)) return;
-            if (!appendElement(xmlDoc, social, "twitch", true)) return;
-            if (!appendElement(xmlDoc, social, "twitter", true)) return;
-            if (!appendElement(xmlDoc, social, "stackoverflow", true)) return;
-            if (!appendElement(xmlDoc, social, "github", true)) return;
-            if (!appendElement(xmlDoc, social, "pinterest", true)) return;
+            socialNames.forEach(function (item) {
+                if (!appendElement(xmlDoc, social, item, true)) return;
+            })
 
             var serializer = new XMLSerializer();
             var xmlString = serializer.serializeToString(xmlDoc);
@@ -268,6 +334,36 @@
         function saveFile(filename, filedata) {
             var blob = new Blob([filedata], { type: "text/plain;charset=utf-8" });
             saveAs(blob, filename);
+        }
+
+        var socialOtherCount = 0;
+        $('#social-other-add').click(addSocialOther);
+        function addSocialOther() {
+            ++socialOtherCount;
+            var newForm = document.createElement('tr');
+
+            var labelElem = document.createElement('td');
+            var labelText = document.createTextNode('Other:');
+            labelElem.appendChild(labelText);
+
+            var formElem = document.createElement('td');
+            var inputElem = document.createElement('input');
+            inputElem.setAttribute('type', 'text');
+            inputElem.setAttribute('name', 'link' + socialOtherCount);
+            inputElem.setAttribute('maxlength', '20');
+            var cancelElem = document.createElement('input');
+            cancelElem.setAttribute('type', 'button');
+            cancelElem.setAttribute('value', 'x');
+            cancelElem.setAttribute('onclick', 'this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);');
+            cancelElem.setAttribute('class', 'btn');
+            formElem.appendChild(inputElem);
+            formElem.appendChild(cancelElem);
+
+            newForm.appendChild(labelElem);
+            newForm.appendChild(formElem);
+
+            insert = document.getElementById("social-other-insert");
+            insert.parentNode.insertBefore(newForm, insert);
         }
     </script>
 </body>

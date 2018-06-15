@@ -7,43 +7,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-    html,
-    body,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: "Roboto", sans-serif;
-    }
-
-    .centered {
-        margin: 0 auto;
-        max-width: 900px;
-    }
-
-    .btn {
-        background-color: teal;
-        border: none;
-        color: white;
-        padding: 6px 8px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    /* Darker background on mouse-over */
-
-    .btn:hover {
-        background-color: rgb(0, 84, 84);
-    }
-
-    table td,
-    table td * {
-        vertical-align: top;
-    }
-</style>
+<link rel="stylesheet" href="stylesheets/main.css">
 
 <body>
 
@@ -143,7 +107,7 @@
                         <tr>
                             <td>Summary:</td>
                             <td>
-                                <textarea name="summary" cols="30" rows="5"></textarea>
+                                <textarea name="summary" cols="30" rows="1"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -244,128 +208,8 @@
             </div>
         </div>
     </footer>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-    <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script>
-    <script src="serialization.js"></script>
-    <script>
-        // var schemaData;
-        // fetch('https://haaxor1689.github.io/PortfolioBuilder/portfolioSchema.xsd')
-        //     .then(response => response.text())
-        //     .then(text => {
-        //         schemaData = text;
-        //     });
-
-        var xmlData;
-        function readSingleFile(e) {
-            var file = e.target.files[0];
-            if (!file) {
-                return;
-            }
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                xmlData = e.target.result;
-            };
-            reader.readAsText(file);
-        }
-        document.getElementById("file-input").addEventListener("change", readSingleFile, false);
-
-        function getElementsByXpath(xmlDoc, path) {
-            return xmlDoc.evaluate(path, xmlDoc, null, XPathResult.ANY_TYPE, null);
-        }
-
-        var counter = 0;
-        function moreFields() {
-            counter++;
-            var newFields = document.getElementById("readroot").cloneNode(true);
-            newFields.id = '';
-            newFields.style.display = "block";
-            var newField = newFields.childNodes;
-            for (var i = 0; i < newField.length; i++) {
-                var theName = newField[i].name
-                if (theName) newField[i].name = theName + counter;
-            }
-            var insertHere = document.getElementById("writeroot");
-            insertHere.parentNode.insertBefore(newFields, insertHere);
-        }
-
-        var socialNames = ["linkedin", "facebook", "instagram", "youtube", "twitch", "twitter", "stackoverflow", "github", "pinterest"];
-
-        $('#load-xml').click(function () {
-            var parser = new DOMParser();
-            var xmlDoc = parser.parseFromString(xmlData, "text/xml");
-
-            getElement(xmlDoc, 'name', false);
-            getElement(xmlDoc, 'email', false);
-            getLocalizedElement(xmlDoc, 'headline', true);
-            getLocalizedElement(xmlDoc, 'summary', false);
-            socialNames.forEach(function (item) {
-                if (!getElement(xmlDoc, item, true)) return;
-            })
-            var otherSocial = getElementsByXpath(xmlDoc, '//social/link');
-            var iter = otherSocial.iterateNext();
-            while (iter) {
-                addSocialOther();
-                $('[name=link' + socialOtherCount + ']').val(iter.getAttribute('url'));
-                iter = otherSocial.iterateNext();
-            }
-        });
-
-        $('form').submit(function (ev) {
-            ev.preventDefault(); //I keep form from submitting
-            var xmlDoc = document.implementation.createDocument(null, "portfolio");
-
-            var portfolio = xmlDoc.getElementsByTagName("portfolio")[0];
-            if (!appendElement(xmlDoc, portfolio, "name", false)) return;
-            if (!appendElement(xmlDoc, portfolio, "email", false)) return;
-            if (!appendLocalizedElement(xmlDoc, portfolio, "headline", true)) return;
-            if (!appendLocalizedElement(xmlDoc, portfolio, "summary", false)) return;
-
-            var social = xmlDoc.createElement("social");
-            portfolio.appendChild(social);
-            socialNames.forEach(function (item) {
-                if (!appendElement(xmlDoc, social, item, true)) return;
-            })
-
-            var serializer = new XMLSerializer();
-            var xmlString = serializer.serializeToString(xmlDoc);
-            saveFile("tst.xml", xmlString)
-        });
-
-        function saveFile(filename, filedata) {
-            var blob = new Blob([filedata], { type: "text/plain;charset=utf-8" });
-            saveAs(blob, filename);
-        }
-
-        var socialOtherCount = 0;
-        $('#social-other-add').click(addSocialOther);
-        function addSocialOther() {
-            ++socialOtherCount;
-            var newForm = document.createElement('tr');
-
-            var labelElem = document.createElement('td');
-            var labelText = document.createTextNode('Other:');
-            labelElem.appendChild(labelText);
-
-            var formElem = document.createElement('td');
-            var inputElem = document.createElement('input');
-            inputElem.setAttribute('type', 'text');
-            inputElem.setAttribute('name', 'link' + socialOtherCount);
-            inputElem.setAttribute('maxlength', '20');
-            var cancelElem = document.createElement('input');
-            cancelElem.setAttribute('type', 'button');
-            cancelElem.setAttribute('value', 'x');
-            cancelElem.setAttribute('onclick', 'this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);');
-            cancelElem.setAttribute('class', 'btn');
-            formElem.appendChild(inputElem);
-            formElem.appendChild(cancelElem);
-
-            newForm.appendChild(labelElem);
-            newForm.appendChild(formElem);
-
-            insert = document.getElementById("social-other-insert");
-            insert.parentNode.insertBefore(newForm, insert);
-        }
-    </script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script>
+    <script data-main="scripts/config" type="text/javascript" src="scripts/lib/require.js"></script>
 </body>
 
 </html>

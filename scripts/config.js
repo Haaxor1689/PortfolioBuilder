@@ -2,19 +2,15 @@ require.config({
     baseUrl: 'scripts',
     paths: {
         'jquery': 'lib/jquery-3.3.1.min',
+        'text': 'lib/text',
     },
     shim: {
         jquery: {
-            exports: '$'
-        }
-    },
-    map: {
-        "*.html": {
-            "*": "*.html"
+            exports: '$',
         }
     }
 });
-require(['main', 'jquery'], function (main, $) {
+require(['main', 'jquery', 'text'], function (main, $) {
     main.Main();
 });
 //# sourceMappingURL=config.js.map

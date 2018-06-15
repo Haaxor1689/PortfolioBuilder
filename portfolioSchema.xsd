@@ -3,38 +3,38 @@
     <xs:element name="portfolio">
         <xs:complexType>
             <xs:sequence>
-                <xs:group ref="basic-info-group"/>
+                <xs:group ref="general-info"/>
                 <xs:element ref="social"/>
-                <xs:element ref="experience-list" minOccurs="0"/>
-                <xs:element ref="education-list" minOccurs="0"/>
-                <xs:element ref="skill-list" minOccurs="0"/>
-                <xs:element ref="project-list" minOccurs="0"/>
+                <xs:element ref="experience" minOccurs="0"/>
+                <xs:element ref="education" minOccurs="0"/>
+                <xs:element ref="skills" minOccurs="0"/>
+                <xs:element ref="projects" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
     <!-- Section lists -->
-    <xs:element name="experience-list">
+    <xs:element name="experience">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="experience" maxOccurs="unbounded"/>
+                <xs:element ref="position" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="education-list">
+    <xs:element name="education">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="education" maxOccurs="unbounded"/>
+                <xs:element ref="study" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="skill-list">
+    <xs:element name="skills">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="skill" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="project-list">
+    <xs:element name="projects">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="project" maxOccurs="unbounded"/>
@@ -42,7 +42,7 @@
         </xs:complexType>
     </xs:element>
     <!-- Section types -->
-    <xs:element name="experience">
+    <xs:element name="position">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="title" type="localized-string-type"/>
@@ -56,7 +56,7 @@
         </xs:complexType>
     </xs:element>
     <!---->
-    <xs:element name="education">
+    <xs:element name="study">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="school" type="company-type"/>
@@ -158,7 +158,7 @@
         </xs:restriction>
     </xs:simpleType>
     <!-- Custom groups -->
-    <xs:group name="basic-info-group">
+    <xs:group name="general-info">
         <xs:sequence>
             <xs:element name="name" type="xs:string"/>
             <xs:element name="email" type="email-address-type"/>

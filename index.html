@@ -7,7 +7,8 @@
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="stylesheets/main.css">
+<link rel="stylesheet" href="stylesheets/defaultStyle.css">
+<link rel="stylesheet" href="stylesheets/formStyle.css">
 
 <body>
 
@@ -50,140 +51,239 @@
                 <button id="load-xml" class="btn">
                     <i class="fa fa-upload"></i> Load
                 </button>
-
-                <hr/>
-
-                <div id="readroot" style="display: none">
-
-                    <input type="button" value="Remove review" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" />
-                    <br/>
-                    <br/>
-
-                    <input name="cd" value="title" />
-
-                    <select name="rankingsel">
-                        <option>Rating</option>
-                        <option value="excellent">Excellent</option>
-                        <option value="good">Good</option>
-                        <option value="ok">OK</option>
-                        <option value="poor">Poor</option>
-                        <option value="bad">Bad</option>
-                    </select>
-                    <br />
-                    <br />
-
-                    <textarea rows="5" cols="20" name="review">Short review</textarea>
-                    <br />Radio buttons included to test them in Explorer:
-                    <br />
-                    <input type="radio" name="something" value="test1" />Test 1
-                    <br />
-                    <input type="radio" name="something" value="test2" />Test 2
+                <div id="xml-load-error" class="hidden">
 
                 </div>
 
-                <form id="form">
-                    <table>
-                        <tr>
-                            <h2>General Info</h2>
-                        </tr>
-                        <tr>
-                            <td>Name:</td>
-                            <td>
-                                <input type="text" name="name" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Email:</td>
-                            <td>
-                                <input type="text" name="email" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Headline(?):</td>
-                            <td>
-                                <input type="text" name="headline" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Summary:</td>
-                            <td>
-                                <textarea name="summary" cols="30" rows="1"></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <h3>Social</h3>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>LinkedIn:</td>
-                            <td>
-                                <input type="text" name="linkedin" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Facebook:</td>
-                            <td>
-                                <input type="text" name="facebook" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Instagram:</td>
-                            <td>
-                                <input type="text" name="instagram" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Youtube:</td>
-                            <td>
-                                <input type="text" name="youtube" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Twitter:</td>
-                            <td>
-                                <input type="text" name="twitter" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Twitch:</td>
-                            <td>
-                                <input type="text" name="twitch" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Stack Overflow:</td>
-                            <td>
-                                <input type="text" name="stackoverflow" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Github:</td>
-                            <td>
-                                <input type="text" name="github" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Pinterest:</td>
-                            <td>
-                                <input type="text" name="pinterest" maxlength="20" />
-                            </td>
-                        </tr>
-                        <tr id="social-other-insert"></tr>
-                        <tr>
-                            <td>Other:</td>
-                            <td>
-                                <input type="button" id="social-other-add" value="+" class="btn" />
-                            </td>
-                        </tr>
-
-                    </table>
-                    <span id="writeroot"></span>
-
-                    <input type="button" onClick="moreFields()" value="Give me more fields!" />
-                    <input type="submit" value="Download XML" />
-
-                </form>
+                <hr/>
+                <div id="form-position"></div>
+                <form xmlns:xs="http://www.w3.org/2001/XMLSchema" id="form">
+                    <h3>general-info</h3><label>name<span>(required)</span><br><input type="text" name="name" required="true"></label><label>email<span>(required)</span><br><input type="email" name="email" required="true"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>headline<br>(loc)<input type="text" name="headline" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>summary<span>(required)</span><br>(loc)<input type="text" name="summary" required="true"></label><h3>social</h3>
+                    
+                    
+                    <label>linkedin<br><input type="text" name="linkedin" required="false"></label>
+                    <label>facebook<br><input type="text" name="facebook" required="false"></label>
+                    <label>instagram<br><input type="text" name="instagram" required="false"></label>
+                    <label>youtube<br><input type="text" name="youtube" required="false"></label>
+                    <label>twitch<br><input type="text" name="twitch" required="false"></label>
+                    <label>twitter<br><input type="text" name="twitter" required="false"></label>
+                    <label>stackoverflow<br><input type="text" name="stackoverflow" required="false"></label>
+                    <label>github<br><input type="text" name="github" required="false"></label>
+                    <label>pinterest<br><input type="text" name="pinterest" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>link<br>(link)<input type="text" name="link" required="false"></label>
+                    
+                    
+                    
+                    <h3>experience</h3>
+                    
+                    
+                    
+                    <h3>position</h3>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>title<span>(required)</span><br>(loc)<input type="text" name="title" required="true"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>company<span>(required)</span><br>(company)<input type="text" name="company" required="true"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>location<span>(required)</span><br>(loc)<input type="text" name="location" required="true"></label>
+                    <label>start<span>(required)</span><br><input type="text" name="start" required="true"></label>
+                    <label>end<br><input type="text" name="end" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>description<br>(loc)<input type="text" name="description" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <h3>education</h3>
+                    
+                    
+                    
+                    <h3>study</h3>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>school<span>(required)</span><br>(company)<input type="text" name="school" required="true"></label>
+                    <label>degree<br><input type="text" name="degree" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>field<span>(required)</span><br>(loc|link)<input type="text" name="field" required="true"></label>
+                    <label>start<span>(required)</span><br><input type="text" name="start" required="true"></label>
+                    <label>end<br><input type="text" name="end" required="false"></label>
+                    <label>degree<br><input type="text" name="degree" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>description<br>(loc)<input type="text" name="description" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <h3>skills</h3>
+                    
+                    
+                    
+                    <h3>skill</h3>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>field<span>(required)</span><br>(loc)<input type="text" name="field" required="true"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>description<span>(required)</span><br>(loc)<input type="text" name="description" required="true"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <h3>projects</h3>
+                    
+                    
+                    
+                    <h3>project</h3>
+                    
+                    
+                    <label>name<span>(required)</span><br><input type="text" name="name" required="true"></label>
+                    <label>type<br><input type="text" name="type" required="false"></label>
+                    <label>start<span>(required)</span><br><input type="text" name="start" required="true"></label>
+                    <label>end<br><input type="text" name="end" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>role<span>(required)</span><br>(loc)<input type="text" name="role" required="true"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>text<span>(required)</span><br><input type="text" name="text" required="true"></label>
+                    
+                    <label>description<span>(required)</span><br>(loc)<input type="text" name="description" required="true"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label>link<br>(link)<input type="text" name="link" required="false"></label>
+                    
+                    
+                    
+                    
+                    
+                    
+                    <input type="submit" value="Download XML" class="submitButton"></form>
             </div>
         </div>
 
@@ -208,6 +308,7 @@
             </div>
         </div>
     </footer>
+    <script type="text/javascript" src="scripts/lib/xmllint.js"></script>
     <script type="text/javascript" src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script>
     <script data-main="scripts/config" type="text/javascript" src="scripts/lib/require.js"></script>
 </body>

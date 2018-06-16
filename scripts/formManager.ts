@@ -44,23 +44,40 @@ export class FormManager {
             return;
         }
 
-        this.IterateChildNodes(this.xmlDocument.documentElement, $("#form")[0]);
+        this.IterateChildNodes(this.xmlDocument.documentElement, <HTMLElement>$("#form")[0]);
     }
 
     private IterateChildNodes(xmlElement: Element, formElement: HTMLElement) {
-        console.log(xmlElement);
-        console.log(formElement);
-        
         var xmlList = xmlElement.children;
         var formList = formElement.children;
-        if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
+
+        if (xmlList.length === 0) {
+            console.log(xmlElement);
+            formElement.getElementsByTagName("input")[0].value = xmlElement.textContent;
+            return;
+        } else if (xmlElement.children[0].nodeName === "text") {
             return;
         }
-        console.log("<---");
+
+        // Skip form headers
+        var offset = formList[0].nodeName === "H4" ? 1 : 0;
+        
         for (var i = 0; i < xmlList.length; ++i) {
-            this.IterateChildNodes(xmlList[i], <HTMLElement>formList[i]);
+            // Add repeating elements
+            if (formList[i + offset].classList.contains("template")) {
+                this.AddElement(formList[i + offset]);
+                // Move behind template after last element
+                if (i + 1 < xmlList.length && xmlList[i].nodeName !== xmlList[i + 1].nodeName) {
+                    ++offset;
+                }
+            }
+
+            // Skip form button elements
+            if (formList[i + offset].classList.contains("appendButton") || formList[i + offset].classList.contains("removeButton")) {
+                ++offset;
+            }
+            this.IterateChildNodes(xmlList[i], <HTMLElement>formList[i + offset]);
         }
-        console.log("--->");
     }
 
     private ValidateXML(): boolean {
@@ -100,12 +117,11 @@ export class FormManager {
         var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
         $("#form-position").html(resultDocument.documentElement.outerHTML);
         $('#form').submit((e) => this.DownloadXML(e));
-        $('#form input.appendButton').on('click', (e) => this.AddElement(e));
+        $('#form input.appendButton').on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
         $('#form input.removeButton').on('click', (e) => this.RemoveElement(e));
     }
 
-    private AddElement(event: JQuery.Event) {
-        var template = event.toElement.previousElementSibling;
+    private AddElement(template: Element) {
         var newNode = template.cloneNode(true);
         (<HTMLElement>newNode).classList.remove("template");
         template.parentElement.insertBefore(newNode, template);

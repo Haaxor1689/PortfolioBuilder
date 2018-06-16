@@ -39,18 +39,33 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             this.IterateChildNodes(this.xmlDocument.documentElement, $("#form")[0]);
         };
         FormManager.prototype.IterateChildNodes = function (xmlElement, formElement) {
-            console.log(xmlElement);
-            console.log(formElement);
             var xmlList = xmlElement.children;
             var formList = formElement.children;
-            if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
+            if (xmlList.length === 0) {
+                console.log(xmlElement);
+                formElement.getElementsByTagName("input")[0].value = xmlElement.textContent;
                 return;
             }
-            console.log("<---");
-            for (var i = 0; i < xmlList.length; ++i) {
-                this.IterateChildNodes(xmlList[i], formList[i]);
+            else if (xmlElement.children[0].nodeName === "text") {
+                return;
             }
-            console.log("--->");
+            // Skip form headers
+            var offset = formList[0].nodeName === "H4" ? 1 : 0;
+            for (var i = 0; i < xmlList.length; ++i) {
+                // Add repeating elements
+                if (formList[i + offset].classList.contains("template")) {
+                    this.AddElement(formList[i + offset]);
+                    // Move behind template after last element
+                    if (i + 1 < xmlList.length && xmlList[i].nodeName !== xmlList[i + 1].nodeName) {
+                        ++offset;
+                    }
+                }
+                // Skip form button elements
+                if (formList[i + offset].classList.contains("appendButton") || formList[i + offset].classList.contains("removeButton")) {
+                    ++offset;
+                }
+                this.IterateChildNodes(xmlList[i], formList[i + offset]);
+            }
         };
         FormManager.prototype.ValidateXML = function () {
             var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
@@ -91,12 +106,11 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
             $("#form-position").html(resultDocument.documentElement.outerHTML);
             $('#form').submit(function (e) { return _this.DownloadXML(e); });
-            $('#form input.appendButton').on('click', function (e) { return _this.AddElement(e); });
+            $('#form input.appendButton').on('click', function (e) { return _this.AddElement(e.toElement.previousElementSibling); });
             $('#form input.removeButton').on('click', function (e) { return _this.RemoveElement(e); });
         };
-        FormManager.prototype.AddElement = function (event) {
+        FormManager.prototype.AddElement = function (template) {
             var _this = this;
-            var template = event.toElement.previousElementSibling;
             var newNode = template.cloneNode(true);
             newNode.classList.remove("template");
             template.parentElement.insertBefore(newNode, template);

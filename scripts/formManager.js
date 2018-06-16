@@ -1,4 +1,4 @@
-define(["require", "exports", "text!../portfolioSchema.xsd", "typings/he"], function (require, exports, schema, he) {
+define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transformations/formTransform.xsl", "typings/he"], function (require, exports, schema, formTransform, he) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var FormManager = /** @class */ (function () {
@@ -6,6 +6,8 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "typings/he"], func
             var _this = this;
             $("#file-input").on('change', function (e) { return _this.LoadXML(e); });
             $('#load-xml').click(function () { return _this.FillForm(); });
+            $('form').submit(function (e) { return _this.DownloadXML(e); });
+            this.GenerateForm();
         }
         FormManager.prototype.LoadXML = function (event) {
             var _this = this;
@@ -65,7 +67,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "typings/he"], func
             console.log(result);
             if (!result.match(this.xmlName + ' validates')) {
                 $("#xml-load-error").removeClass("hidden");
-                $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + lint);
+                $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + result);
                 return false;
             }
             return true;
@@ -82,6 +84,19 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "typings/he"], func
             enumerable: true,
             configurable: true
         });
+        FormManager.prototype.GenerateForm = function () {
+            var xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
+            var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
+            $("#form-position").html(resultDocument.documentElement.outerHTML);
+        };
+        FormManager.prototype.NodeFromString = function (xmlString) {
+            var doc = new DOMParser().parseFromString(xmlString, "text/xml");
+            return doc.documentElement;
+        };
+        FormManager.prototype.DownloadXML = function (event) {
+            event.preventDefault();
+        };
         return FormManager;
     }());
     exports.FormManager = FormManager;

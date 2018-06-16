@@ -1,27 +1,44 @@
 form {
-    margin: 1rem 2%;
-    max-width: 25rem;
+    max-width: 40rem;
+    display: block;
 }
 
-form>label {
+form div {
+    background-color: #f6f6f6;
+    border-radius: 1rem;
+    padding: 0 .74rem;
+    padding-bottom: .74rem;
+    margin-bottom: .74rem;
+    display: block;
+}
+
+form div>div {
+    background-color: #e2e2e2;
+    border-radius: 1rem;
+    padding: 0 .74rem;
+}
+
+form label {
     display: block;
     padding: .75rem 0;
+    cursor: default;
 }
 
-form>label>span {
+form label>span {
     font-size: .75rem;
     color: red;
 }
 
-fomr>label>input {
+form input {
     display: block;
     font-size: 1rem;
     padding: .74rem;
-    background-color: #f6f6f6;
+    background-color: #fff;
     border: 1px solid #bbb;
     color: blue;
     margin-top: .2rem;
     width: 100%;
+    cursor: text;
 }
 
 form>input.submitButton {
@@ -33,6 +50,9 @@ form>input.submitButton {
     padding: .4rem 1rem;
     border-radius: 1rem;
     width: 100%;
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
     -webkit-appearance: none;
     -moz-appearance: none;
 }

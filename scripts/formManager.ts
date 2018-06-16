@@ -1,4 +1,5 @@
 import * as schema from "text!../portfolioSchema.xsd";
+import * as formTransform from "text!../transformations/formTransform.xsl";
 declare let validateXML: any;
 import he = require('typings/he');
 
@@ -9,6 +10,8 @@ export class FormManager {
     constructor() {
         $("#file-input").on('change', (e) => this.LoadXML(e));
         $('#load-xml').click(() => this.FillForm());
+        $('form').submit((e) => this.DownloadXML(e));
+        this.GenerateForm();
     }
 
     private LoadXML(event: JQuery.Event) {
@@ -57,11 +60,11 @@ export class FormManager {
         //     iter = otherSocial.iterateNext();
         // }
     }
-    
-    private ValidateXML() : boolean {
+
+    private ValidateXML(): boolean {
         var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
             allowUnsafeSymbols: true
-          });
+        });
         //create an object
         var Module = {
             xml: encodedXML,
@@ -74,18 +77,34 @@ export class FormManager {
         console.log(result);
         if (!result.match(this.xmlName + ' validates')) {
             $("#xml-load-error").removeClass("hidden");
-            $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + lint);
+            $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + result);
             return false;
         }
         return true;
     }
 
-    private get HasLoadedXML(): Boolean  {
+    private get HasLoadedXML(): Boolean {
         return this.xmlDocument &&
             !(this.xmlDocument.firstChild &&
                 this.xmlDocument.firstChild.firstChild
                 && this.xmlDocument.firstChild.firstChild.firstChild &&
                 this.xmlDocument.firstChild.firstChild.firstChild.localName == "parsererror" ||
                 false);
+    }
+
+    private GenerateForm() {
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
+        var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
+        $("#form-position").html(resultDocument.documentElement.outerHTML);
+    }
+
+    private NodeFromString(xmlString: string): Node {
+        var doc = new DOMParser().parseFromString(xmlString, "text/xml");
+        return doc.documentElement;
+    }
+
+    private DownloadXML(event: JQuery.Event) {
+        event.preventDefault();
     }
 }

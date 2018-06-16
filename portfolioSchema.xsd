@@ -3,128 +3,124 @@
     <xs:element name="portfolio">
         <xs:complexType>
             <xs:sequence>
-                <xs:group ref="general-info"/>
-                <xs:element ref="social"/>
-                <xs:element ref="experience" minOccurs="0"/>
-                <xs:element ref="education" minOccurs="0"/>
-                <xs:element ref="skills" minOccurs="0"/>
-                <xs:element ref="projects" minOccurs="0"/>
+                <xs:group ref="General info"/>
+                <xs:element ref="Social"/>
+                <xs:element ref="Experience" minOccurs="0"/>
+                <xs:element ref="Education" minOccurs="0"/>
+                <xs:element ref="Skills" minOccurs="0"/>
+                <xs:element ref="Projects" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
     <!-- Section lists -->
-    <xs:element name="experience">
+    <xs:element name="Experience">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="position" maxOccurs="unbounded"/>
+                <xs:element ref="Position" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="education">
+    <xs:element name="Education">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="study" maxOccurs="unbounded"/>
+                <xs:element ref="Study" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="skills">
+    <xs:element name="Skills">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="skill" maxOccurs="unbounded"/>
+                <xs:element ref="Skill" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="projects">
+    <xs:element name="Projects">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="project" maxOccurs="unbounded"/>
+                <xs:element ref="Project" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
     <!-- Section types -->
-    <xs:element name="position">
+    <xs:element name="Position">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="localized-string-type"/>
-                <xs:element name="company" type="company-type"/>
-                <xs:element name="location" type="localized-string-type"/>
-                <xs:element name="start" type="xs:gYearMonth"/>
-                <xs:element name="end" type="xs:gYearMonth" minOccurs="0"/>
-                <xs:element name="description" type="localized-string-type" minOccurs="0"/>
+                <xs:element name="Title" type="localized-string-type"/>
+                <xs:element name="Company" type="company-type"/>
+                <xs:element name="Location" type="localized-string-type"/>
+                <xs:element name="Start" type="xs:gYearMonth"/>
+                <xs:element name="End" type="xs:gYearMonth" minOccurs="0"/>
+                <xs:element name="Description" type="localized-string-type" minOccurs="0"/>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
     <!---->
-    <xs:element name="study">
+    <xs:element name="Study">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="school" type="company-type"/>
-                <xs:element name="degree" type="xs:string" minOccurs="0"/>
-                <xs:element name="field" type="localized-with-url-type"/>
-                <xs:element name="start" type="xs:gYear"/>
-                <xs:element name="end" type="xs:gYear" minOccurs="0"/>
-                <xs:element name="degree" type="xs:string" minOccurs="0"/>
-                <xs:element name="description" type="localized-string-type" minOccurs="0"/>
+                <xs:element name="School" type="company-type"/>
+                <xs:element name="Degree" type="xs:string" minOccurs="0"/>
+                <xs:element name="Field" type="localized-with-url-type"/>
+                <xs:element name="Start" type="xs:gYear"/>
+                <xs:element name="End" type="xs:gYear" minOccurs="0"/>
+                <xs:element name="Degree" type="xs:string" minOccurs="0"/>
+                <xs:element name="Description" type="localized-string-type" minOccurs="0"/>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
     <!---->
-    <xs:element name="skill">
+    <xs:element name="Skill">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="field" type="localized-string-type"/>
-                <xs:element name="description" type="localized-string-type"/>
+                <xs:element name="Field" type="localized-string-type"/>
+                <xs:element name="Description" type="localized-string-type"/>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
     <!---->
-    <xs:element name="project">
+    <xs:element name="Project">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="name" type="xs:string"/>
-                <xs:element name="type" type="xs:string" minOccurs="0"/>
-                <xs:element name="start" type="xs:gYearMonth"/>
-                <xs:element name="end" type="xs:gYearMonth" minOccurs="0"/>
-                <xs:element name="role" type="localized-string-type"/>
-                <xs:element name="description" type="localized-string-type"/>
-                <xs:element name="link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="Name" type="xs:string"/>
+                <xs:element name="Type" type="xs:string" minOccurs="0"/>
+                <xs:element name="Start" type="xs:gYearMonth"/>
+                <xs:element name="End" type="xs:gYearMonth" minOccurs="0"/>
+                <xs:element name="Role" type="localized-string-type"/>
+                <xs:element name="Description" type="localized-string-type"/>
+                <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
     <!-- Other helper types -->
     <xs:complexType name="company-type">
         <xs:complexContent>
             <xs:extension base="localized-string-type">
-                <xs:attribute name="logo" type="xs:string"/>
-                <xs:attribute name="url" type="xs:string"/>
+                <xs:attribute name="Logo" type="xs:string"/>
+                <xs:attribute name="Url" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="localized-with-url-type">
         <xs:complexContent>
             <xs:extension base="localized-string-type">
-                <xs:attribute name="url" type="xs:string"/>
+                <xs:attribute name="Url" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <!---->
-    <xs:element name="social">
+    <xs:element name="Social">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="linkedin" type="xs:string" minOccurs="0"/>
-                <xs:element name="facebook" type="xs:string" minOccurs="0"/>
-                <xs:element name="instagram" type="xs:string" minOccurs="0"/>
-                <xs:element name="youtube" type="xs:string" minOccurs="0"/>
-                <xs:element name="twitch" type="xs:string" minOccurs="0"/>
-                <xs:element name="twitter" type="xs:string" minOccurs="0"/>
-                <xs:element name="stackoverflow" type="xs:string" minOccurs="0"/>
-                <xs:element name="github" type="xs:string" minOccurs="0"/>
-                <xs:element name="pinterest" type="xs:string" minOccurs="0"/>
-                <xs:element name="link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="Linkedin" type="xs:string" minOccurs="0"/>
+                <xs:element name="Facebook" type="xs:string" minOccurs="0"/>
+                <xs:element name="Instagram" type="xs:string" minOccurs="0"/>
+                <xs:element name="Youtube" type="xs:string" minOccurs="0"/>
+                <xs:element name="Twitch" type="xs:string" minOccurs="0"/>
+                <xs:element name="Twitter" type="xs:string" minOccurs="0"/>
+                <xs:element name="Stackoverflow" type="xs:string" minOccurs="0"/>
+                <xs:element name="Github" type="xs:string" minOccurs="0"/>
+                <xs:element name="Pinterest" type="xs:string" minOccurs="0"/>
+                <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -132,7 +128,7 @@
     <xs:complexType name="link-type">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="url" type="xs:string" use="required"/>
+                <xs:attribute name="Url" type="xs:string" use="required"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -158,12 +154,12 @@
         </xs:restriction>
     </xs:simpleType>
     <!-- Custom groups -->
-    <xs:group name="general-info">
+    <xs:group name="General info">
         <xs:sequence>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="email" type="email-address-type"/>
-            <xs:element name="headline" type="localized-string-type" minOccurs="0"/>
-            <xs:element name="summary" type="localized-string-type"/>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="Email" type="email-address-type"/>
+            <xs:element name="Headline" type="localized-string-type" minOccurs="0"/>
+            <xs:element name="Summary" type="localized-string-type"/>
         </xs:sequence>
     </xs:group>
     <!-- String regexes -->

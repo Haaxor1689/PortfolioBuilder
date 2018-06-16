@@ -6,7 +6,6 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             var _this = this;
             $("#file-input").on('change', function (e) { return _this.LoadXML(e); });
             $('#load-xml').click(function () { return _this.FillForm(); });
-            $('form').submit(function (e) { return _this.DownloadXML(e); });
             this.GenerateForm();
         }
         FormManager.prototype.LoadXML = function (event) {
@@ -85,10 +84,25 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             configurable: true
         });
         FormManager.prototype.GenerateForm = function () {
+            var _this = this;
             var xsltProcessor = new XSLTProcessor();
             xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
             var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
             $("#form-position").html(resultDocument.documentElement.outerHTML);
+            $('#form').submit(function (e) { return _this.DownloadXML(e); });
+            $('#form input.appendButton').on('click', function (e) { return _this.AddElement(e); });
+            $('#form input.removeButton').on('click', function (e) { return _this.RemoveElement(e); });
+        };
+        FormManager.prototype.AddElement = function (event) {
+            var _this = this;
+            var template = event.toElement.previousElementSibling;
+            var newNode = template.cloneNode(true);
+            newNode.classList.remove("template");
+            template.parentElement.insertBefore(newNode, template);
+            $('#form input.removeButton').on('click', function (e) { return _this.RemoveElement(e); });
+        };
+        FormManager.prototype.RemoveElement = function (event) {
+            event.toElement.parentElement.remove();
         };
         FormManager.prototype.NodeFromString = function (xmlString) {
             var doc = new DOMParser().parseFromString(xmlString, "text/xml");

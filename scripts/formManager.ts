@@ -10,7 +10,6 @@ export class FormManager {
     constructor() {
         $("#file-input").on('change', (e) => this.LoadXML(e));
         $('#load-xml').click(() => this.FillForm());
-        $('form').submit((e) => this.DownloadXML(e));
         this.GenerateForm();
     }
 
@@ -97,6 +96,21 @@ export class FormManager {
         xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
         var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
         $("#form-position").html(resultDocument.documentElement.outerHTML);
+        $('#form').submit((e) => this.DownloadXML(e));
+        $('#form input.appendButton').on('click', (e) => this.AddElement(e));
+        $('#form input.removeButton').on('click', (e) => this.RemoveElement(e));
+    }
+
+    private AddElement(event: JQuery.Event) {
+        var template = event.toElement.previousElementSibling;
+        var newNode = template.cloneNode(true);
+        (<HTMLElement>newNode).classList.remove("template");
+        template.parentElement.insertBefore(newNode, template);
+        $('#form input.removeButton').on('click', (e) => this.RemoveElement(e));
+    }
+
+    private RemoveElement(event: JQuery.Event) {
+        event.toElement.parentElement.remove();
     }
 
     private NodeFromString(xmlString: string): Node {

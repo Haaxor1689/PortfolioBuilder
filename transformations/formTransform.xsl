@@ -14,12 +14,31 @@
     </xsl:template>
 
     <xsl:template match="xs:group[@ref] | xs:element[@ref]">
-        <div>
-            <h4>
-                <xsl:value-of select="@ref" />
-            </h4>
-             <xsl:apply-templates select="/xs:schema/*[@name=current()/@ref]" /> 
-        </div>
+        <xsl:choose>
+            <xsl:when test="@maxOccurs">
+                <div class="template">
+                    <xsl:call-template name="ref-body" />
+                </div>
+                <input type="button" class="appendButton" value="Add {@ref}"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <div>
+                    <xsl:call-template name="ref-body" />
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="ref-body">
+        <h4>
+            <xsl:value-of select="@ref" />
+        </h4>
+        <xsl:choose>
+            <xsl:when test="@maxOccurs">
+                <input type="button" class="removeButton" value="Remove {@ref}"/>
+            </xsl:when>
+        </xsl:choose>
+        <xsl:apply-templates select="/xs:schema/*[@name=current()/@ref]" />
     </xsl:template>
 
     <xsl:template match="xs:group[@name]">
@@ -31,62 +50,51 @@
     </xsl:template>
 
     <xsl:template match="xs:element[@name and @type]">
-        <label>
-            <xsl:value-of select="@name" />
-            <xsl:choose>
-                <xsl:when test="not(@minOccurs=0)">
-                    <span>(required)</span>
-                </xsl:when>
-            </xsl:choose>
-            <xsl:choose>
-                <xsl:when test="@type='email-address-type'">
-                    <xsl:choose>
-                        <xsl:when test="not(@minOccurs) or @minOccurs!=0">
-                            <input type="email" name="{@name}" required="true"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <input type="email" name="{@name}" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:when test="@type='xs:gYear'">
-                    <xsl:choose>
-                        <xsl:when test="not(@minOccurs) or @minOccurs!=0">
-                            <input type="text" name="{@name}" required="true" pattern="\d{4}" placeholder="yyyy" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <input type="text" name="{@name}" pattern="\d{4}" placeholder="yyyy" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:when test="@type='xs:gYearMonth'">
-                    <xsl:choose>
-                        <xsl:when test="not(@minOccurs) or @minOccurs!=0">
-                            <input type="text" name="{@name}" required="true" pattern="\d{4}-\d{2}" placeholder="yyyy-dd"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <input type="text" name="{@name}" pattern="\d{4}-\d{2}" placeholder="yyyy-dd"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:choose>
-                        <xsl:when test="not(@minOccurs) or @minOccurs!=0">
-                            <input type="text" name="{@name}" required="true" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <input type="text" name="{@name}" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:apply-templates select="/xs:schema/xs:complexType[@name=current()/@type]//xs:attribute" />
-        </label>
-        <xsl:apply-templates select="xs:complexType/xs:attribute" />
+        <xsl:choose>
+            <xsl:when test="@maxOccurs">
+                <label class="template">
+                    <xsl:call-template name="element-body" />
+                </label>
+                <input type="button" class="appendButton" value="Add {@name}"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <label>
+                    <xsl:call-template name="element-body" />
+                </label>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="element-body">
+        <xsl:value-of select="@name" />
+        <xsl:choose>
+            <xsl:when test="not(@minOccurs=0)">
+                <span>(required)</span>
+            </xsl:when>
+        </xsl:choose>
+        <xsl:choose>
+            <xsl:when test="@maxOccurs">
+                <input type="button" class="removeButton" value="Remove {@name}"/>
+            </xsl:when>
+        </xsl:choose>
+        <xsl:choose>
+            <xsl:when test="@type='email-address-type'">
+                <input type="email" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}"/>
+            </xsl:when>
+            <xsl:when test="@type='xs:gYear'"><input type="text" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}" pattern="\d{4}" placeholder="yyyy" />
+            </xsl:when>
+            <xsl:when test="@type='xs:gYearMonth'">
+                <input type="text" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}" data-pattern="\d{4}-\d{2}" placeholder="yyyy-dd"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <input type="text" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}" />
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:apply-templates select="/xs:schema/xs:complexType[@name=current()/@type]//xs:attribute" />
     </xsl:template>
 
     <xsl:template match="//xs:attribute">
-        <input type="text" name="{@name}" required="{@use='required'}" placeholder="@{@name}"/>
+        <input type="text" name="{@name}" data-required="{@use='required'}" placeholder="@{@name}"/>
     </xsl:template>
 
 </xsl:transform>

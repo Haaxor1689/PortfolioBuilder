@@ -13,7 +13,7 @@
         </form>
     </xsl:template>
 
-    <xsl:template match="xs:group[@ref] | xs:element[@ref]">
+    <xsl:template match="xs:element[@ref]">
         <xsl:choose>
             <xsl:when test="@maxOccurs">
                 <div class="template">
@@ -39,10 +39,6 @@
             </xsl:when>
         </xsl:choose>
         <xsl:apply-templates select="/xs:schema/*[@name=current()/@ref]" />
-    </xsl:template>
-
-    <xsl:template match="xs:group[@name]">
-        <xsl:apply-templates select="xs:sequence/*" />
     </xsl:template>
     
     <xsl:template match="xs:element[@name and not(@type)]">

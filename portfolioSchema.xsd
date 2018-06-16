@@ -3,12 +3,40 @@
     <xs:element name="portfolio">
         <xs:complexType>
             <xs:sequence>
-                <xs:group ref="GeneralInfo"/>
+                <xs:element ref="GeneralInfo"/>
                 <xs:element ref="Social"/>
                 <xs:element ref="Experience" minOccurs="0"/>
                 <xs:element ref="Education" minOccurs="0"/>
                 <xs:element ref="Skills" minOccurs="0"/>
                 <xs:element ref="Projects" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!---->
+    <xs:element name="GeneralInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Name" type="xs:string"/>
+                <xs:element name="Email" type="email-address-type"/>
+                <xs:element name="Headline" type="localized-string-type" minOccurs="0"/>
+                <xs:element name="Summary" type="localized-string-type"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!---->
+    <xs:element name="Social">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Linkedin" type="xs:string" minOccurs="0"/>
+                <xs:element name="Facebook" type="xs:string" minOccurs="0"/>
+                <xs:element name="Instagram" type="xs:string" minOccurs="0"/>
+                <xs:element name="Youtube" type="xs:string" minOccurs="0"/>
+                <xs:element name="Twitch" type="xs:string" minOccurs="0"/>
+                <xs:element name="Twitter" type="xs:string" minOccurs="0"/>
+                <xs:element name="Stackoverflow" type="xs:string" minOccurs="0"/>
+                <xs:element name="Github" type="xs:string" minOccurs="0"/>
+                <xs:element name="Pinterest" type="xs:string" minOccurs="0"/>
+                <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -108,23 +136,6 @@
         </xs:complexContent>
     </xs:complexType>
     <!---->
-    <xs:element name="Social">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Linkedin" type="xs:string" minOccurs="0"/>
-                <xs:element name="Facebook" type="xs:string" minOccurs="0"/>
-                <xs:element name="Instagram" type="xs:string" minOccurs="0"/>
-                <xs:element name="Youtube" type="xs:string" minOccurs="0"/>
-                <xs:element name="Twitch" type="xs:string" minOccurs="0"/>
-                <xs:element name="Twitter" type="xs:string" minOccurs="0"/>
-                <xs:element name="Stackoverflow" type="xs:string" minOccurs="0"/>
-                <xs:element name="Github" type="xs:string" minOccurs="0"/>
-                <xs:element name="Pinterest" type="xs:string" minOccurs="0"/>
-                <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <!---->
     <xs:complexType name="link-type">
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -153,15 +164,6 @@
             <xs:enumeration value="sk"/>
         </xs:restriction>
     </xs:simpleType>
-    <!-- Custom groups -->
-    <xs:group name="GeneralInfo">
-        <xs:sequence>
-            <xs:element name="Name" type="xs:string"/>
-            <xs:element name="Email" type="email-address-type"/>
-            <xs:element name="Headline" type="localized-string-type" minOccurs="0"/>
-            <xs:element name="Summary" type="localized-string-type"/>
-        </xs:sequence>
-    </xs:group>
     <!-- String regexes -->
     <xs:simpleType name="email-address-type">
         <xs:restriction base="xs:string">

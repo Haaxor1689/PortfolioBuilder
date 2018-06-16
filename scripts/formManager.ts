@@ -44,24 +44,23 @@ export class FormManager {
             return;
         }
 
-        var nodes = this.xmlDocument.children;
-        for (var i = 0; i < nodes.length; ++i) {
-            console.log(nodes[i]);
+        this.IterateChildNodes(this.xmlDocument.documentElement, $("#form")[0]);
+    }
+
+    private IterateChildNodes(xmlElement: Element, formElement: HTMLElement) {
+        console.log(xmlElement);
+        console.log(formElement);
+        
+        var xmlList = xmlElement.children;
+        var formList = formElement.children;
+        if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
+            return;
         }
-        // getElement(xmlDoc, 'name', false);
-        // getElement(xmlDoc, 'email', false);
-        // getLocalizedElement(xmlDoc, 'headline', true);
-        // getLocalizedElement(xmlDoc, 'summary', false);
-        // socialNames.forEach(function (item) {
-        //     if (!getElement(xmlDoc, item, true)) return;
-        // })
-        // var otherSocial = getElementsByXpath(xmlDoc, '//social/link');
-        // var iter = otherSocial.iterateNext();
-        // while (iter) {
-        //     addSocialOther();
-        //     $('[name=link' + socialOtherCount + ']').val(iter.getAttribute('url'));
-        //     iter = otherSocial.iterateNext();
-        // }
+        console.log("<---");
+        for (var i = 0; i < xmlList.length; ++i) {
+            this.IterateChildNodes(xmlList[i], <HTMLElement>formList[i]);
+        }
+        console.log("--->");
     }
 
     private ValidateXML(): boolean {

@@ -44,6 +44,10 @@ export class FormManager {
             return;
         }
 
+        var nodes = this.xmlDocument.children;
+        for (var i = 0; i < nodes.length; ++i) {
+            console.log(nodes[i]);
+        }
         // getElement(xmlDoc, 'name', false);
         // getElement(xmlDoc, 'email', false);
         // getLocalizedElement(xmlDoc, 'headline', true);

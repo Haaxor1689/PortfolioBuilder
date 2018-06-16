@@ -3,7 +3,7 @@
     <xs:element name="portfolio">
         <xs:complexType>
             <xs:sequence>
-                <xs:group ref="General info"/>
+                <xs:group ref="GeneralInfo"/>
                 <xs:element ref="Social"/>
                 <xs:element ref="Experience" minOccurs="0"/>
                 <xs:element ref="Education" minOccurs="0"/>
@@ -154,7 +154,7 @@
         </xs:restriction>
     </xs:simpleType>
     <!-- Custom groups -->
-    <xs:group name="General info">
+    <xs:group name="GeneralInfo">
         <xs:sequence>
             <xs:element name="Name" type="xs:string"/>
             <xs:element name="Email" type="email-address-type"/>

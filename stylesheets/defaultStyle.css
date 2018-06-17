@@ -26,6 +26,8 @@ nav > div > a {
     display: inline-block;
     margin: .25rem;
     padding: .75rem;
+    border-radius: 1rem;
+    text-decoration: none;
 }
 
 nav > div > a:hover {

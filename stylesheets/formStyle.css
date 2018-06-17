@@ -26,12 +26,16 @@ form div>div>div {
 
 form label {
     display: block;
-    padding: .75rem 0;
+    padding: 1rem 0;
     cursor: default;
 }
 
-form label>span {
+form label label {
     font-size: .75rem;
+    padding: 0 0;
+}
+
+form label>span {
     color: red;
 }
 

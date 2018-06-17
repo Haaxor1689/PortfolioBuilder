@@ -27,6 +27,26 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             };
             reader.readAsText(file);
         };
+        FormManager.prototype.ValidateXML = function () {
+            var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
+                allowUnsafeSymbols: true
+            });
+            //create an object
+            var Module = {
+                xml: encodedXML,
+                schema: schema,
+                arguments: ["--noout", "--schema", 'portfolioSchema.xsd', this.xmlName]
+            };
+            //and call function
+            var result = validateXML(Module);
+            console.log(result);
+            if (!result.match(this.xmlName + ' validates')) {
+                $("#xml-load-error").removeClass("hidden");
+                $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + result);
+                return false;
+            }
+            return true;
+        };
         FormManager.prototype.FillForm = function () {
             if (!this.xmlDocument) {
                 $("#xml-load-error").removeClass("hidden");
@@ -36,19 +56,24 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             if (!this.ValidateXML()) {
                 return;
             }
+            this.GenerateForm();
             this.IterateChildNodes(this.xmlDocument.documentElement, $("#form")[0]);
         };
         FormManager.prototype.IterateChildNodes = function (xmlElement, formElement) {
             var xmlList = xmlElement.children;
             var formList = formElement.children;
-            if (xmlList.length === 0) {
+            if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
                 var input = $(formElement).children("textarea, input[name]")[0];
-                input.value = xmlElement.textContent;
-                return;
-            }
-            else if (xmlElement.children[0].nodeName === "text") {
-                var input = $(formElement).children("textarea, input")[0];
-                input.value = xmlElement.children[0].textContent;
+                input.value = xmlList.length === 0 ? xmlElement.textContent : xmlElement.children[0].textContent;
+                // Fill attribute fields
+                var nextAttr = $(input).next("label")[0];
+                while (nextAttr !== undefined) {
+                    var attr = $(nextAttr).children("textarea, input[name]")[0];
+                    if (xmlElement.hasAttribute(attr.name)) {
+                        attr.value = xmlElement.getAttribute(attr.name);
+                    }
+                    nextAttr = $(nextAttr).next("label")[0];
+                }
                 return;
             }
             // Skip form headers
@@ -82,28 +107,8 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                 return $(formElement).children("H4")[0].innerText;
             }
             else {
-                return formElement.innerText;
+                return $(formElement).children("textarea, input[name]")[0].getAttribute("name");
             }
-        };
-        FormManager.prototype.ValidateXML = function () {
-            var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
-                allowUnsafeSymbols: true
-            });
-            //create an object
-            var Module = {
-                xml: encodedXML,
-                schema: schema,
-                arguments: ["--noout", "--schema", 'portfolioSchema.xsd', this.xmlName]
-            };
-            //and call function
-            var result = validateXML(Module);
-            console.log(result);
-            if (!result.match(this.xmlName + ' validates')) {
-                $("#xml-load-error").removeClass("hidden");
-                $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + result);
-                return false;
-            }
-            return true;
         };
         Object.defineProperty(FormManager.prototype, "HasLoadedXML", {
             get: function () {
@@ -119,6 +124,10 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
         });
         FormManager.prototype.GenerateForm = function () {
             var _this = this;
+            var oldForm = $('#form')[0];
+            if (oldForm !== undefined) {
+                oldForm.remove();
+            }
             var xsltProcessor = new XSLTProcessor();
             xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
             var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));

@@ -13,7 +13,7 @@ export class FormManager {
         this.GenerateForm();
     }
 
-    private LoadXML(event: JQuery.Event) {
+    private LoadXML(event: JQuery.Event): void {
         event.preventDefault();
         $("#xml-load-error").addClass("hidden");
         var file = (<HTMLInputElement>event.currentTarget).files[0];
@@ -33,7 +33,29 @@ export class FormManager {
         reader.readAsText(file);
     }
 
-    private FillForm() {
+    private ValidateXML(): boolean {
+        var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
+            allowUnsafeSymbols: true
+        });
+        //create an object
+        var Module = {
+            xml: encodedXML,
+            schema: schema,
+            arguments: ["--noout", "--schema", 'portfolioSchema.xsd', this.xmlName]
+        };
+
+        //and call function
+        var result: string = validateXML(Module);
+        console.log(result);
+        if (!result.match(this.xmlName + ' validates')) {
+            $("#xml-load-error").removeClass("hidden");
+            $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + result);
+            return false;
+        }
+        return true;
+    }
+
+    private FillForm(): void {
         if (!this.xmlDocument) {
             $("#xml-load-error").removeClass("hidden");
             $("#xml-load-error").text("Provided file isn't a well formed xml.");
@@ -44,20 +66,26 @@ export class FormManager {
             return;
         }
 
+        this.GenerateForm();
         this.IterateChildNodes(this.xmlDocument.documentElement, <HTMLElement>$("#form")[0]);
     }
 
-    private IterateChildNodes(xmlElement: Element, formElement: HTMLElement) {
+    private IterateChildNodes(xmlElement: Element, formElement: HTMLElement): void {
         var xmlList = xmlElement.children;
         var formList = formElement.children;
 
-        if (xmlList.length === 0) {
+        if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
             var input = <HTMLInputElement>$(formElement).children("textarea, input[name]")[0];
-            input.value = xmlElement.textContent;
-            return;
-        } else if (xmlElement.children[0].nodeName === "text") {
-            var input = <HTMLInputElement>$(formElement).children("textarea, input")[0];
-            input.value = xmlElement.children[0].textContent;
+            input.value = xmlList.length === 0 ? xmlElement.textContent : xmlElement.children[0].textContent;
+            // Fill attribute fields
+            var nextAttr = <HTMLInputElement>$(input).next("label")[0];
+            while (nextAttr !== undefined) {
+                var attr = <HTMLInputElement>$(nextAttr).children("textarea, input[name]")[0];
+                if (xmlElement.hasAttribute(attr.name)) {
+                    attr.value = xmlElement.getAttribute(attr.name);
+                }
+                nextAttr = <HTMLInputElement>$(nextAttr).next("label")[0];
+            }
             return;
         }
 
@@ -95,30 +123,8 @@ export class FormManager {
         if (formElement.nodeName === "DIV") {
             return $(formElement).children("H4")[0].innerText;
         } else {
-            return formElement.innerText;
+            return $(formElement).children("textarea, input[name]")[0].getAttribute("name");
         }
-    }
-
-    private ValidateXML(): boolean {
-        var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
-            allowUnsafeSymbols: true
-        });
-        //create an object
-        var Module = {
-            xml: encodedXML,
-            schema: schema,
-            arguments: ["--noout", "--schema", 'portfolioSchema.xsd', this.xmlName]
-        };
-
-        //and call function
-        var result: string = validateXML(Module);
-        console.log(result);
-        if (!result.match(this.xmlName + ' validates')) {
-            $("#xml-load-error").removeClass("hidden");
-            $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + result);
-            return false;
-        }
-        return true;
     }
 
     private get HasLoadedXML(): Boolean {
@@ -130,7 +136,12 @@ export class FormManager {
                 false);
     }
 
-    private GenerateForm() {
+    private GenerateForm(): void {
+        var oldForm = $('#form')[0];
+        if (oldForm !== undefined) {
+            oldForm.remove();
+        }
+
         var xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
         var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
@@ -140,14 +151,14 @@ export class FormManager {
         $('#form input.removeButton').on('click', (e) => this.RemoveElement(e));
     }
 
-    private AddElement(template: Element) {
+    private AddElement(template: Element): void {
         var newNode = template.cloneNode(true);
         (<HTMLElement>newNode).classList.remove("template");
         template.parentElement.insertBefore(newNode, template);
         $('#form input.removeButton').on('click', (e) => this.RemoveElement(e));
     }
 
-    private RemoveElement(event: JQuery.Event) {
+    private RemoveElement(event: JQuery.Event): void {
         event.toElement.parentElement.remove();
     }
 
@@ -156,7 +167,7 @@ export class FormManager {
         return doc.documentElement;
     }
 
-    private DownloadXML(event: JQuery.Event) {
+    private DownloadXML(event: JQuery.Event): void {
         event.preventDefault();
     }
 }

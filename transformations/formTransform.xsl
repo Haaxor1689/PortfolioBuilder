@@ -65,7 +65,7 @@
         <xsl:value-of select="@name" />
         <xsl:choose>
             <xsl:when test="not(@minOccurs=0)">
-                <span>(required)</span>
+                <span>*</span>
             </xsl:when>
         </xsl:choose>
         <xsl:choose>
@@ -93,7 +93,15 @@
     </xsl:template>
 
     <xsl:template match="//xs:attribute">
-        <input type="text" name="{@name}" data-required="{@use='required'}" placeholder="@{@name}"/>
+        <label>
+            <xsl:value-of select="@name" />
+            <xsl:choose>
+                <xsl:when test="@use='required'">
+                    <span>*</span>
+                </xsl:when>
+            </xsl:choose>
+            <input type="text" name="{@name}" data-required="{@use='required'}" />
+        </label>
     </xsl:template>
 
 </xsl:transform>

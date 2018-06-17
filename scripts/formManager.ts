@@ -49,7 +49,7 @@ export class FormManager {
         console.log(result);
         if (!result.match(this.xmlName + ' validates')) {
             $("#xml-load-error").removeClass("hidden");
-            $("#xml-load-error").text("Provided XML doesn't conform to equired schema. Errors:" + result);
+            $("#xml-load-error").text("Provided XML doesn't conform to required schema. Errors:\n" + result);
             return false;
         }
         return true;

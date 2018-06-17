@@ -4,76 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="stylesheets/defaultStyle.css">
 <link rel="stylesheet" href="stylesheets/formStyle.css">
+
 <body>
     <!-- Navbar -->
-    <div class="w3-top">
-        <div class="w3-row w3-padding w3-black">
-            <div class="centered">
-                <div class="w3-col s3">
-                    <a href="#" class="w3-button w3-block w3-black">Home</a>
-                </div>
-                <div class="w3-col s3">
-                    <a href="#started" class="w3-button w3-block w3-black">Getting Started</a>
-                </div>
-                <div class="w3-col s3">
-                    <a href="#builder" class="w3-button w3-block w3-black">Builder</a>
-                </div>
-                <div class="w3-col s3">
-                    <a href="#about" class="w3-button w3-block w3-black">About</a>
-                </div>
-            </div>
+    <nav>
+        <div>
+            <a href="#">Home</a>
+            <a href="#started">Getting Started</a>
+            <a href="#builder">Builder</a>
+            <a href="#export">Export options</a>
+            <a href="#about">About</a>
         </div>
-    </div>
-    <div class="w3-main centered">
-        <div class="w3-row w3-padding-64">
-            <div class="w3-container">
-                <h1 class="w3-text-teal" id="getting-started">Getting Started</h1>
-                <p></p>
-            </div>
+    </nav>
+    <div class="main">
+        <div class="section">
+            <h1 id="getting-started">Getting Started</h1>
+            <p>Import your XML portfolio:</p>
+            <input type="file" id="file-input" />
+            <button id="load-xml">
+                <i class="fa fa-upload"></i> Load
+            </button>
+            <pre id="xml-load-error" class="hidden">
+            </pre>
         </div>
 
-        <div class="w3-row">
-            <div class="w3-container">
-                <h1 class="w3-text-teal" id="builder">Builder</h1>
-                <hr/>
-
-                <p>Import your XML portfolio:</p>
-                <input type="file" id="file-input" />
-                <button id="load-xml" class="btn">
-                    <i class="fa fa-upload"></i> Load
-                </button>
-                <div id="xml-load-error" class="hidden">
-                </div>
-                <hr/>
-                <div id="form-position">
-                </div>
+        <div class="section">
+            <h1 id="builder">Builder</h1>
+            <div id="form-position">
             </div>
         </div>
 
-        <div class="w3-row">
-            <div class="w3-container">
-                <h1 class="w3-text-teal" id="about">About</h1>
-                <p>Online tool for creating your portfolio in XML format with multiple export options, using XSL transformations.
-                    You can check out project's source on github
-                    <a href="https://github.com/Haaxor1689/PortfolioBuilder">here</a>.</p>
-            </div>
+        <div class="section">
+            <h1 id="export">Export options</h1>
+            
+        </div>
+
+        <div class="section">
+            <h1 id="about">About</h1>
+            <p>Online tool for creating your portfolio in XML format with multiple export options, using XSL transformations.
+                You can check out project's source on github
+                <a href="https://github.com/Haaxor1689/PortfolioBuilder">here</a>.</p>
         </div>
 
         <!-- END MAIN -->
     </div>
 
     <footer id="myFooter">
-        <div class="w3-container w3-theme-l1">
-            <div class="centered">
-                <p>Powered by
-                    <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
-                </p>
-            </div>
+        <div>
+            <p>Powered by
+                <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
+            </p>
         </div>
     </footer>
     <script type="text/javascript" src="scripts/lib/xmllint.js"></script>

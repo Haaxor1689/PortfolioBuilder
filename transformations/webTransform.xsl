@@ -5,19 +5,16 @@
     <!-- Root node -->
     <xsl:template match="/portfolio">
         <html>
-            <head>
-                <title>
-                    <xsl:value-of select="GeneralInfo/Name"/>
-                    <xsl:text>'s Portfolio</xsl:text>
-                </title>
-                <meta charset="UTF-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
-                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat"/>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-                <link rel="stylesheet" type="text/css" href="flags/sprite-flags-24x24.css"/>
-                <link rel="stylesheet" href="style.css" type="text/css"/>
-            </head>
+            <title>
+                <xsl:value-of select="GeneralInfo/Name"/>
+                <xsl:text>'s Portfolio</xsl:text>
+            </title>
+            <meta charset="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat"/>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+            <link rel="stylesheet" href="stylesheets/webStyle.css"/>
             <body class="w3-black">
                 <!-- Icon Bar (Sidebar - hidden on small screens) -->
                 <nav class="w3-sidebar w3-bar-block w3-hide-small grey-background">

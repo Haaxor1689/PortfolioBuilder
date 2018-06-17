@@ -1,0 +1,77 @@
+body,h1,h2,h3,h4,h5,h6 {
+    font-family: "Montserrat", sans-serif
+}
+
+.centered {
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+.btn {
+    background-color: teal;
+    border: none;
+    color: white;
+    padding: 6px 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none
+}
+
+/* Darker background on mouse-over */
+
+.btn:hover {
+    background-color: rgb(0, 84, 84);
+}
+
+table td, table td * {
+    vertical-align: top;
+}
+
+.indented {
+    padding-left: 1.5em;
+    text-indent:-1.5em;
+}
+
+.inline {
+    display: inline;
+}
+
+.w3-row-padding img {
+    margin-bottom: 12px
+}
+
+.smaller {
+    font-size: 80%;
+}
+
+.right-margin {
+    margin-right: 5px;
+}
+
+.left-margin {
+    margin-left: 5px;
+}
+
+.grey-background {
+    background: #222;
+}
+
+/* Set the width of the sidebar to 120px */
+.w3-sidebar.w3-hide-small {
+    width: 140px;
+}
+
+/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
+#main {
+    margin-left: 140px
+}
+
+/* Remove margins from "page content" on small screens */
+@media only screen and (max-width: 600px) {
+    #main {
+        margin-left: 0
+    }
+}

@@ -16,13 +16,13 @@
     <xsl:template match="xs:element[@ref]">
         <xsl:choose>
             <xsl:when test="@maxOccurs">
-                <div class="template">
+                <div class="template" data-required="{not(@minOccurs) or @minOccurs!=0}">
                     <xsl:call-template name="ref-body" />
                 </div>
                 <input type="button" class="appendButton" value="Add {@ref}"/>
             </xsl:when>
             <xsl:otherwise>
-                <div>
+                <div data-required="{not(@minOccurs) or @minOccurs!=0}">
                     <xsl:call-template name="ref-body" />
                 </div>
             </xsl:otherwise>
@@ -48,13 +48,13 @@
     <xsl:template match="xs:element[@name and @type]">
         <xsl:choose>
             <xsl:when test="@maxOccurs">
-                <label class="template">
+                <label class="template" data-required="{not(@minOccurs) or @minOccurs!=0}">
                     <xsl:call-template name="element-body" />
                 </label>
                 <input type="button" class="appendButton" value="Add {@name}"/>
             </xsl:when>
             <xsl:otherwise>
-                <label>
+                <label data-required="{not(@minOccurs) or @minOccurs!=0}">
                     <xsl:call-template name="element-body" />
                 </label>
             </xsl:otherwise>
@@ -75,15 +75,18 @@
         </xsl:choose>
         <xsl:choose>
             <xsl:when test="@type='email-address-type'">
-                <input type="email" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}"/>
+                <input type="email" name="{@name}"/>
             </xsl:when>
-            <xsl:when test="@type='xs:gYear'"><input type="text" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}" pattern="\d{4}" placeholder="yyyy" />
+            <xsl:when test="@type='xs:gYear'"><input type="text" name="{@name}" pattern="\d{4}" placeholder="yyyy" />
             </xsl:when>
             <xsl:when test="@type='xs:gYearMonth'">
-                <input type="text" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}" data-pattern="\d{4}-\d{2}" placeholder="yyyy-dd"/>
+                <input type="text" name="{@name}" data-pattern="\d{4}-\d{2}" placeholder="yyyy-dd"/>
+            </xsl:when>
+            <xsl:when test="@type='xs:string' or @type='localized-string-type'">
+                <textarea name="{@name}" rows="3"/>
             </xsl:when>
             <xsl:otherwise>
-                <input type="text" name="{@name}" data-required="{not(@minOccurs) or @minOccurs!=0}" />
+                <input type="text" name="{@name}" />
             </xsl:otherwise>
         </xsl:choose>
         <xsl:apply-templates select="/xs:schema/xs:complexType[@name=current()/@type]//xs:attribute" />

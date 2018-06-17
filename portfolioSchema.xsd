@@ -16,9 +16,9 @@
     <xs:element name="GeneralInfo">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Name" type="xs:string"/>
+                <xs:element name="Name" type="xs:token"/>
                 <xs:element name="Email" type="email-address-type"/>
-                <xs:element name="Headline" type="localized-string-type" minOccurs="0"/>
+                <xs:element name="Headline" type="localized-token-type" minOccurs="0"/>
                 <xs:element name="Summary" type="localized-string-type"/>
             </xs:sequence>
         </xs:complexType>
@@ -27,15 +27,15 @@
     <xs:element name="Social">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Linkedin" type="xs:string" minOccurs="0"/>
-                <xs:element name="Facebook" type="xs:string" minOccurs="0"/>
-                <xs:element name="Instagram" type="xs:string" minOccurs="0"/>
-                <xs:element name="Youtube" type="xs:string" minOccurs="0"/>
-                <xs:element name="Twitch" type="xs:string" minOccurs="0"/>
-                <xs:element name="Twitter" type="xs:string" minOccurs="0"/>
-                <xs:element name="Stackoverflow" type="xs:string" minOccurs="0"/>
-                <xs:element name="Github" type="xs:string" minOccurs="0"/>
-                <xs:element name="Pinterest" type="xs:string" minOccurs="0"/>
+                <xs:element name="Linkedin" type="xs:token" minOccurs="0"/>
+                <xs:element name="Facebook" type="xs:token" minOccurs="0"/>
+                <xs:element name="Instagram" type="xs:token" minOccurs="0"/>
+                <xs:element name="Youtube" type="xs:token" minOccurs="0"/>
+                <xs:element name="Twitch" type="xs:token" minOccurs="0"/>
+                <xs:element name="Twitter" type="xs:token" minOccurs="0"/>
+                <xs:element name="Stackoverflow" type="xs:token" minOccurs="0"/>
+                <xs:element name="Github" type="xs:token" minOccurs="0"/>
+                <xs:element name="Pinterest" type="xs:token" minOccurs="0"/>
                 <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
@@ -73,9 +73,9 @@
     <xs:element name="Position">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Title" type="localized-string-type"/>
+                <xs:element name="Title" type="localized-token-type"/>
                 <xs:element name="Company" type="company-type"/>
-                <xs:element name="Location" type="localized-string-type"/>
+                <xs:element name="Location" type="localized-token-type"/>
                 <xs:element name="Start" type="xs:gYearMonth"/>
                 <xs:element name="End" type="xs:gYearMonth" minOccurs="0"/>
                 <xs:element name="Description" type="localized-string-type" minOccurs="0"/>
@@ -87,11 +87,10 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="School" type="company-type"/>
-                <xs:element name="Degree" type="xs:string" minOccurs="0"/>
+                <xs:element name="Degree" type="xs:token" minOccurs="0"/>
                 <xs:element name="Field" type="localized-with-url-type"/>
                 <xs:element name="Start" type="xs:gYear"/>
                 <xs:element name="End" type="xs:gYear" minOccurs="0"/>
-                <xs:element name="Degree" type="xs:string" minOccurs="0"/>
                 <xs:element name="Description" type="localized-string-type" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
@@ -100,7 +99,7 @@
     <xs:element name="Skill">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Field" type="localized-string-type"/>
+                <xs:element name="Field" type="localized-token-type"/>
                 <xs:element name="Description" type="localized-string-type"/>
             </xs:sequence>
         </xs:complexType>
@@ -109,11 +108,11 @@
     <xs:element name="Project">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Name" type="xs:string"/>
-                <xs:element name="Type" type="xs:string" minOccurs="0"/>
+                <xs:element name="Name" type="xs:token"/>
+                <xs:element name="Type" type="xs:token" minOccurs="0"/>
                 <xs:element name="Start" type="xs:gYearMonth"/>
                 <xs:element name="End" type="xs:gYearMonth" minOccurs="0"/>
-                <xs:element name="Role" type="localized-string-type"/>
+                <xs:element name="Role" type="localized-token-type"/>
                 <xs:element name="Description" type="localized-string-type"/>
                 <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
@@ -123,15 +122,15 @@
     <xs:complexType name="company-type">
         <xs:complexContent>
             <xs:extension base="localized-string-type">
-                <xs:attribute name="Logo" type="xs:string"/>
-                <xs:attribute name="Url" type="xs:string"/>
+                <xs:attribute name="Logo" type="xs:token"/>
+                <xs:attribute name="Url" type="xs:token"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="localized-with-url-type">
         <xs:complexContent>
             <xs:extension base="localized-string-type">
-                <xs:attribute name="Url" type="xs:string"/>
+                <xs:attribute name="Url" type="xs:token"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -139,12 +138,18 @@
     <xs:complexType name="link-type">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="Url" type="xs:string" use="required"/>
+                <xs:attribute name="Url" type="xs:token" use="required"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <!---->
     <xs:complexType name="localized-string-type">
+        <xs:sequence>
+            <xs:element name="text" type="text-type" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <!---->
+    <xs:complexType name="localized-token-type">
         <xs:sequence>
             <xs:element name="text" type="text-type" maxOccurs="unbounded"/>
         </xs:sequence>

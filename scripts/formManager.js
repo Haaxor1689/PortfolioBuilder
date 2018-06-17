@@ -42,29 +42,47 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             var xmlList = xmlElement.children;
             var formList = formElement.children;
             if (xmlList.length === 0) {
-                console.log(xmlElement);
-                formElement.getElementsByTagName("input")[0].value = xmlElement.textContent;
+                var input = $(formElement).children("textarea, input[name]")[0];
+                input.value = xmlElement.textContent;
                 return;
             }
             else if (xmlElement.children[0].nodeName === "text") {
+                var input = $(formElement).children("textarea, input")[0];
+                input.value = xmlElement.children[0].textContent;
                 return;
             }
             // Skip form headers
             var offset = formList[0].nodeName === "H4" ? 1 : 0;
             for (var i = 0; i < xmlList.length; ++i) {
+                var a = xmlList[i].outerHTML;
+                var b = formList[i + offset].outerHTML;
+                var formElem = formList[i + offset];
+                // Skip form button elements
+                // Skip unused optional elements
+                while ((formElem.dataset.required === "false" && xmlList[i].nodeName !== this.GetFieldName(formElem)) || formElem.classList.contains("appendButton") || formElem.classList.contains("removeButton")) {
+                    ++offset;
+                    formElem = formList[i + offset];
+                    b = formList[i + offset].outerHTML;
+                }
                 // Add repeating elements
-                if (formList[i + offset].classList.contains("template")) {
-                    this.AddElement(formList[i + offset]);
+                if (formElem.classList.contains("template")) {
+                    this.AddElement(formElem);
                     // Move behind template after last element
                     if (i + 1 < xmlList.length && xmlList[i].nodeName !== xmlList[i + 1].nodeName) {
                         ++offset;
                     }
+                    formElem = formList[i + offset];
+                    b = formList[i + offset].outerHTML;
                 }
-                // Skip form button elements
-                if (formList[i + offset].classList.contains("appendButton") || formList[i + offset].classList.contains("removeButton")) {
-                    ++offset;
-                }
-                this.IterateChildNodes(xmlList[i], formList[i + offset]);
+                this.IterateChildNodes(xmlList[i], formElem);
+            }
+        };
+        FormManager.prototype.GetFieldName = function (formElement) {
+            if (formElement.nodeName === "DIV") {
+                return $(formElement).children("H4")[0].innerText;
+            }
+            else {
+                return formElement.innerText;
             }
         };
         FormManager.prototype.ValidateXML = function () {

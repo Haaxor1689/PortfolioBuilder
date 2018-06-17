@@ -35,7 +35,7 @@ form label>span {
     color: red;
 }
 
-form input {
+form input, form textarea {
     display: block;
     font-size: 1rem;
     padding: .74rem;
@@ -45,6 +45,10 @@ form input {
     margin-top: .2rem;
     width: 100%;
     cursor: text;
+}
+
+form textarea {
+    resize: vertical;
 }
 
 form input.appendButton {

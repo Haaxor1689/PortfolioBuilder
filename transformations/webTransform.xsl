@@ -14,7 +14,7 @@
             <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat"/>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-            <link rel="stylesheet" href="stylesheets/webStyle.css"/>
+            <link rel="stylesheet" href="https://haaxor1689.github.io/PortfolioBuilder/stylesheets/webStyle.css"/>
             <body class="w3-black">
                 <!-- Icon Bar (Sidebar - hidden on small screens) -->
                 <nav class="w3-sidebar w3-bar-block w3-hide-small grey-background">

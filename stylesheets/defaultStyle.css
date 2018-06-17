@@ -70,7 +70,7 @@ button:hover {
 
 pre.error {
     color: rgb(255, 56, 56);
-    background-color: rgb(255, 180, 180);
+    background-color: rgb(255, 205, 205);
     border-radius: 1rem;
     padding: .74rem;
     white-space: pre-wrap;

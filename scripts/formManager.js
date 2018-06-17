@@ -7,9 +7,35 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             $("#file-input").unbind().on('change', function (e) { return _this.LoadXML(e); });
             $('#upload-xml').unbind().on("click", function () { return _this.FillForm(); });
             $('#download-xml').unbind().on("click", function () { return _this.DownloadXML(); });
-            $('#export-html').unbind().on("click", function () { return _this.ExportHTML(); });
+            $('#export-html').unbind().on("click", function () { return _this.ExportHTML(webTransform); });
             this.GenerateForm();
+            // Custom schema buttons
+            $('#download-schema').unbind().on("click", function () {
+                saveAs(new File([schema], "portfolioSchema.xsd", { type: "text/xml" }));
+            });
+            $("#schema-input").unbind().on('change', function (e) { return _this.LoadCustomSchema(e); });
+            $('#upload-schema').unbind().on("click", function () { return _this.GenerateForm(); });
+            // Custom transform buttons
+            $('#download-transform').unbind().on("click", function () {
+                saveAs(new File([webTransform], "portfolioTransform.xsl", { type: "text/xml" }));
+            });
+            $("#custom-transform-input").unbind().on('change', function (e) { return _this.LoadCustomTransform(e); });
+            $('#export-custom-transform').unbind().on("click", function () {
+                if (_this.customTransform === undefined || _this.customTransform === "") {
+                    $("#custom-transform-upload-error").removeClass("hidden");
+                    $("#custom-transform-upload-error").text("Please select a non empty file.");
+                    return;
+                }
+                _this.ExportHTML(_this.customTransform);
+            });
         }
+        Object.defineProperty(FormManager.prototype, "currentSchema", {
+            get: function () {
+                return this.customSchema === undefined ? schema : this.customSchema;
+            },
+            enumerable: true,
+            configurable: true
+        });
         FormManager.prototype.LoadXML = function (event) {
             var _this = this;
             event.preventDefault();
@@ -29,13 +55,37 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             };
             reader.readAsText(file);
         };
+        FormManager.prototype.LoadCustomSchema = function (event) {
+            var _this = this;
+            event.preventDefault();
+            $("#schema-upload-error").addClass("hidden");
+            var file = event.currentTarget.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function (event) { return _this.customSchema = event.target.result; };
+            reader.readAsText(file);
+        };
+        FormManager.prototype.LoadCustomTransform = function (event) {
+            var _this = this;
+            event.preventDefault();
+            $("#custom-transform-upload-error").addClass("hidden");
+            var file = event.currentTarget.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function (event) { return _this.customTransform = event.target.result; };
+            reader.readAsText(file);
+        };
         FormManager.prototype.ValidateXML = function () {
             var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
                 allowUnsafeSymbols: true
             });
             var Module = {
                 xml: encodedXML,
-                schema: schema,
+                schema: this.currentSchema,
                 arguments: ["--noout", "--schema", 'portfolioSchema.xsd', this.xmlName]
             };
             var result = validateXML(Module);
@@ -172,7 +222,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             }
             var xsltProcessor = new XSLTProcessor();
             xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
-            var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
+            var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(this.currentSchema));
             $("#form-position").html(resultDocument.documentElement.outerHTML);
             $('#form input.appendButton').unbind().on('click', function (e) { return _this.AddElement(e.toElement.previousElementSibling); });
             $('#form input.removeButton').unbind().on('click', function (e) { return _this.RemoveElement(e.toElement); });
@@ -189,15 +239,14 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                 stringRepresentation = '<?xml version="1.0" encoding="UTF-8"?>\n' + stringRepresentation;
             }
             // Save
-            var blob = new File([stringRepresentation], "portfolio.xml", { type: "text/xml" });
-            saveAs(blob);
+            saveAs(new File([stringRepresentation], "portfolio.xml", { type: "text/xml" }));
         };
-        FormManager.prototype.ExportHTML = function () {
+        FormManager.prototype.ExportHTML = function (transform) {
             if (!this.SaveForm()) {
                 return;
             }
             var xsltProcessor = new XSLTProcessor();
-            xsltProcessor.importStylesheet(this.NodeFromString(webTransform));
+            xsltProcessor.importStylesheet(this.NodeFromString(transform));
             var resultDocument = xsltProcessor.transformToDocument(this.xmlDocument);
             // Serialize to string
             var stringRepresentation = new XMLSerializer().serializeToString(resultDocument);

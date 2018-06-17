@@ -17,6 +17,7 @@
             <a href="#started">Getting Started</a>
             <a href="#builder">Builder</a>
             <a href="#export">Export options</a>
+            <a href="#customization">Customization</a>
             <a href="#about">About</a>
         </div>
     </nav>
@@ -24,7 +25,8 @@
         <div class="section">
             <h1 id="getting-started">Getting Started</h1>
             <p>Start from scratch by filling up the empty form or import previously built portfolio xml file. After finishing, download exported xml portfolio for later use or choose from export options below.</p>
-            <p>Portfolio XML file: <input type="file" id="file-input" /></p>
+            <h5>Select portfolio XML file:</h5>
+            <input type="file" id="file-input" />
             <button id="upload-xml">
                 <i class="fa fa-upload"></i>Upload XML Portfolio
             </button>
@@ -51,6 +53,37 @@
             <button id="export-html">
                 <i class="fa fa-html5"></i>Download HTML5 export
             </button>
+        </div>
+
+        <div class="section">
+            <h1 id="customization">Customization</h1>
+            <p>You can customize how this app works by modifying default schemas and transformations.</p>
+            
+            <h2>Portfolio schema</h2>
+            <p>By customizing portfolio schema you can add, remove or modify fields in portfolio template.</p>
+            <button id="download-schema">
+                <i class="fa fa-download"></i>Download default schema
+            </button>
+            <h5>Select custom XML Schema file:</h5>
+            <input type="file" id="schema-input" />
+            <button id="upload-schema">
+                <i class="fa fa-upload"></i>Upload custom schema
+            </button>
+            <pre id="schema-upload-error" class="hidden error">
+            </pre>
+            
+            <h2>HTML5 export transformation</h2>
+            <p>By customizing export transformation you can change adjust default export or add transformation for you schema adjustments.</p>
+            <button id="download-transform">
+                <i class="fa fa-download"></i>Download default HTML5 transform
+            </button>
+            <h5>Select custom XSLT Transformation file:</h5>
+            <input type="file" id="custom-transform-input" />
+            <button id="export-custom-transform">
+                <i class="fa fa-html5"></i>Download transformed HTML5
+            </button>
+            <pre id="custom-transform-upload-error" class="hidden error">
+            </pre>
         </div>
 
         <div class="section">

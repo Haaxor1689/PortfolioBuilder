@@ -12,12 +12,40 @@ export class FormManager {
     private xmlDocument: XMLDocument;
     private xmlName: string;
 
+    private customSchema: string;
+    private customTransform: string;
+
+    private get currentSchema(): string {
+        return this.customSchema === undefined ? schema : this.customSchema;
+    }
+
     constructor() {
         $("#file-input").unbind().on('change', (e) => this.LoadXML(e));
         $('#upload-xml').unbind().on("click",() => this.FillForm());
         $('#download-xml').unbind().on("click", () => this.DownloadXML());
-        $('#export-html').unbind().on("click", () => this.ExportHTML());
+        $('#export-html').unbind().on("click", () => this.ExportHTML(webTransform));
         this.GenerateForm();
+        
+        // Custom schema buttons
+        $('#download-schema').unbind().on("click", () => {
+            saveAs(new File([schema], "portfolioSchema.xsd", {type: "text/xml"}))
+        });
+        $("#schema-input").unbind().on('change', (e) => this.LoadCustomSchema(e));
+        $('#upload-schema').unbind().on("click",() => this.GenerateForm());
+
+        // Custom transform buttons
+        $('#download-transform').unbind().on("click", () => {
+            saveAs(new File([webTransform], "portfolioTransform.xsl", {type: "text/xml"}))
+        });
+        $("#custom-transform-input").unbind().on('change', (e) => this.LoadCustomTransform(e));
+        $('#export-custom-transform').unbind().on("click", () => {
+            if (this.customTransform === undefined || this.customTransform === "") {
+                $("#custom-transform-upload-error").removeClass("hidden");
+                $("#custom-transform-upload-error").text("Please select a non empty file.");
+                return;
+            }
+            this.ExportHTML(this.customTransform);
+        });
     }
 
     private LoadXML(event: JQuery.Event): void {
@@ -40,6 +68,32 @@ export class FormManager {
         reader.readAsText(file);
     }
 
+    private LoadCustomSchema(event: JQuery.Event): void {
+        event.preventDefault();
+        $("#schema-upload-error").addClass("hidden");
+        var file = (<HTMLInputElement>event.currentTarget).files[0];
+        if (!file) {
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = (event) => this.customSchema = event.target.result;
+        reader.readAsText(file);
+    }
+
+    private LoadCustomTransform(event: JQuery.Event): void {
+        event.preventDefault();
+        $("#custom-transform-upload-error").addClass("hidden");
+        var file = (<HTMLInputElement>event.currentTarget).files[0];
+        if (!file) {
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = (event) => this.customTransform = event.target.result;
+        reader.readAsText(file);
+    }
+
     private ValidateXML(): boolean {
         var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
             allowUnsafeSymbols: true
@@ -47,7 +101,7 @@ export class FormManager {
 
         var Module = {
             xml: encodedXML,
-            schema: schema,
+            schema: this.currentSchema,
             arguments: ["--noout", "--schema", 'portfolioSchema.xsd', this.xmlName]
         };
 
@@ -202,7 +256,7 @@ export class FormManager {
 
         var xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
-        var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
+        var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(this.currentSchema));
         $("#form-position").html(resultDocument.documentElement.outerHTML);
         $('#form input.appendButton').unbind().on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
         $('#form input.removeButton').unbind().on('click', (e) => this.RemoveElement(<HTMLInputElement>e.toElement));
@@ -221,17 +275,16 @@ export class FormManager {
             stringRepresentation = '<?xml version="1.0" encoding="UTF-8"?>\n' + stringRepresentation;
         }
         // Save
-        var blob = new File([stringRepresentation], "portfolio.xml", {type: "text/xml"});
-        saveAs(blob);
+        saveAs(new File([stringRepresentation], "portfolio.xml", {type: "text/xml"}));
     }
 
-    private ExportHTML(): void {
+    private ExportHTML(transform: string): void {
         if (!this.SaveForm()) {
             return;
         }
         
         var xsltProcessor = new XSLTProcessor();
-        xsltProcessor.importStylesheet(this.NodeFromString(webTransform));
+        xsltProcessor.importStylesheet(this.NodeFromString(transform));
         var resultDocument = xsltProcessor.transformToDocument(this.xmlDocument);
 
         // Serialize to string

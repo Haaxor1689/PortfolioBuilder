@@ -39,13 +39,20 @@ footer > div > p {
 }
 
 button {
-    background-color: teal;
     border: none;
+    background-color: teal;
     color: white;
-    padding: 6px 8px;
-    font-size: 16px;
+    font-size: 1.5rem;
+    font-weight: 300;
+    padding: .4rem 1rem;
+    border-radius: 1rem;
+    width: 100%;
+    align-items: flex-start;
+    text-align: center;
     cursor: pointer;
-    border-radius: 0.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    margin: 1rem 0;
 }
 
 button:hover {
@@ -61,10 +68,14 @@ button:hover {
     padding: 0 .25rem;
 }
 
-#xml-load-error {
+pre.error {
     color: rgb(255, 56, 56);
     background-color: rgb(255, 180, 180);
     border-radius: 1rem;
     padding: .74rem;
     white-space: pre-wrap;
+}
+
+i.fa {
+    padding: 0 .5rem;
 }

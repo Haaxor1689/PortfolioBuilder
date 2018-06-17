@@ -23,12 +23,12 @@
     <div class="main">
         <div class="section">
             <h1 id="getting-started">Getting Started</h1>
-            <p>Import your XML portfolio:</p>
-            <input type="file" id="file-input" />
-            <button id="load-xml">
-                <i class="fa fa-upload"></i> Load
+            <p>Start from scratch by filling up the empty form or import previously built portfolio xml file. After finishing, download exported xml portfolio for later use or choose from export options below.</p>
+            <p>Portfolio XML file: <input type="file" id="file-input" /></p>
+            <button id="upload-xml">
+                <i class="fa fa-upload"></i>Upload XML Portfolio
             </button>
-            <pre id="xml-load-error" class="hidden">
+            <pre id="upload-error" class="hidden error">
             </pre>
         </div>
 
@@ -40,7 +40,17 @@
 
         <div class="section">
             <h1 id="export">Export options</h1>
+            <pre id="export-error" class="hidden error">
+                
+            </pre>
             
+            <button id="download-xml">
+                <i class="fa fa-download"></i>Download XML source
+            </button>
+
+            <button id="export-html">
+                <i class="fa fa-html5"></i>Download HTML5 export
+            </button>
         </div>
 
         <div class="section">

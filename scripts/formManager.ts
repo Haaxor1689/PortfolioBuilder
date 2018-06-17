@@ -1,6 +1,11 @@
 import * as schema from "text!../portfolioSchema.xsd";
 import * as formTransform from "text!../transformations/formTransform.xsl";
+import * as webTransform from "text!../transformations/webTransform.xsl";
+
+// xmllint
 declare let validateXML: any;
+
+// html entity encode
 import he = require('typings/he');
 
 export class FormManager {
@@ -8,14 +13,16 @@ export class FormManager {
     private xmlName: string;
 
     constructor() {
-        $("#file-input").on('change', (e) => this.LoadXML(e));
-        $('#load-xml').click(() => this.FillForm());
+        $("#file-input").unbind().on('change', (e) => this.LoadXML(e));
+        $('#upload-xml').unbind().on("click",() => this.FillForm());
+        $('#download-xml').unbind().on("click", () => this.DownloadXML());
+        $('#export-html').unbind().on("click", () => this.ExportHTML());
         this.GenerateForm();
     }
 
     private LoadXML(event: JQuery.Event): void {
         event.preventDefault();
-        $("#xml-load-error").addClass("hidden");
+        $("#upload-error").addClass("hidden");
         var file = (<HTMLInputElement>event.currentTarget).files[0];
         if (!file) {
             return;
@@ -37,19 +44,17 @@ export class FormManager {
         var encodedXML = he.encode(this.xmlDocument.documentElement.outerHTML, {
             allowUnsafeSymbols: true
         });
-        //create an object
+
         var Module = {
             xml: encodedXML,
             schema: schema,
             arguments: ["--noout", "--schema", 'portfolioSchema.xsd', this.xmlName]
         };
 
-        //and call function
         var result: string = validateXML(Module);
-        console.log(result);
         if (!result.match(this.xmlName + ' validates')) {
-            $("#xml-load-error").removeClass("hidden");
-            $("#xml-load-error").text("Provided XML doesn't conform to required schema. Errors:\n" + result);
+            $("#upload-error").removeClass("hidden");
+            $("#upload-error").text("Provided XML doesn't conform to required schema. Errors:\n" + result);
             return false;
         }
         return true;
@@ -80,8 +85,8 @@ export class FormManager {
 
     private FillForm(): void {
         if (!this.xmlDocument) {
-            $("#xml-load-error").removeClass("hidden");
-            $("#xml-load-error").text("Provided file isn't a well formed xml.");
+            $("#upload-error").removeClass("hidden");
+            $("#upload-error").text("Provided file isn't a well formed xml.");
             return;
         }
 
@@ -91,12 +96,6 @@ export class FormManager {
 
         this.GenerateForm();
         this.ImportChildNodes(this.xmlDocument.documentElement, <HTMLElement>$("#form")[0]);
-    }
-
-    private ClearFormErrors() {
-        $("#form").find("textarea, input[name]").each((_, elem: HTMLElement) => {
-            elem.classList.remove("invalid");
-        });
     }
 
     private ImportChildNodes(xmlElement: Element, formElement: HTMLElement): void {
@@ -148,25 +147,18 @@ export class FormManager {
         }
     }
 
-    private SaveForm(): void {
+    private SaveForm(): boolean {
         if (!this.ValidateForm()) {
-            return;
+            $("#export-error").removeClass("hidden");
+            $("#export-error").text("Fill out all required fields before exporting.");
+            return false;
         }
+        $("#export-error").addClass("hidden");
 
         // Create new XML document
         this.xmlDocument = new DOMParser().parseFromString("<portfolio></portfolio>", "text/xml");
-
         this.ExportChildNodes(this.xmlDocument.documentElement, <HTMLElement>$("#form")[0]);
-
-        // Serialize to string
-        var stringRepresentation = new XMLSerializer().serializeToString(this.xmlDocument);
-        // Add missing XML declaration
-        if (stringRepresentation.match("\<\?xml version") === null) {
-            stringRepresentation = '<?xml version="1.0" encoding="UTF-8"?>\n' + stringRepresentation;
-        }
-        // Save
-        var blob = new File([stringRepresentation], "portfolio.xml", {type: "text/xml"});
-        saveAs(blob);
+        return true;
     }
 
     private ExportChildNodes(xmlElement: Element, formElement: HTMLElement): void {
@@ -201,6 +193,75 @@ export class FormManager {
         })
     }
 
+    private GenerateForm(): void {
+        var oldForm = $('#form')[0];
+        if (oldForm !== undefined) {
+            oldForm.remove();
+        }
+
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
+        var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
+        $("#form-position").html(resultDocument.documentElement.outerHTML);
+        $('#form input.appendButton').unbind().on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
+        $('#form input.removeButton').unbind().on('click', (e) => this.RemoveElement(e));
+    }
+
+    private DownloadXML(): void {
+        if (!this.SaveForm()) {
+            return;
+        }
+
+        // Serialize to string
+        var stringRepresentation = new XMLSerializer().serializeToString(this.xmlDocument);
+        // Add missing XML declaration
+        if (stringRepresentation.match("\<\?xml version") === null) {
+            stringRepresentation = '<?xml version="1.0" encoding="UTF-8"?>\n' + stringRepresentation;
+        }
+        // Save
+        var blob = new File([stringRepresentation], "portfolio.xml", {type: "text/xml"});
+        saveAs(blob);
+    }
+
+    private ExportHTML(): void {
+        if (!this.SaveForm()) {
+            return;
+        }
+        
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(this.NodeFromString(webTransform));
+        var resultDocument = xsltProcessor.transformToDocument(this.xmlDocument);
+
+        // Serialize to string
+        var stringRepresentation = new XMLSerializer().serializeToString(resultDocument);
+        // Save
+        var blob = new File([stringRepresentation], "portfolio.html", {type: "text/html"});
+        saveAs(blob);
+    }
+
+    // Add/remove button actions
+    private AddElement(template: Element): void {
+        var newNode = template.cloneNode(true);
+        (<HTMLElement>newNode).classList.remove("template");
+        template.parentElement.insertBefore(newNode, template);
+        $(newNode).children(".removeButton").first().unbind().on('click', (e) => this.RemoveElement(e));
+        
+    }
+
+    private RemoveElement(event: JQuery.Event): void {
+        event.toElement.parentElement.remove();
+    }
+
+    // Helper functions
+    private NodeFromString(xmlString: string): Node {
+        var doc = new DOMParser().parseFromString(xmlString, "text/xml");
+        return doc.documentElement;
+    }
+
+    private IsEmptyInput(element: HTMLInputElement): boolean {
+        return element.value === null || element.value === "";
+    }
+
     private GetFieldName(formElement: HTMLElement): string {
         if (formElement.nodeName === "DIV") {
             return $(formElement).children("H4")[0].innerText;
@@ -217,44 +278,10 @@ export class FormManager {
                 this.xmlDocument.firstChild.firstChild.firstChild.localName == "parsererror" ||
                 false);
     }
-
-    private GenerateForm(): void {
-        var oldForm = $('#form')[0];
-        if (oldForm !== undefined) {
-            oldForm.remove();
-        }
-
-        var xsltProcessor = new XSLTProcessor();
-        xsltProcessor.importStylesheet(this.NodeFromString(formTransform));
-        var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
-        $("#form-position").html(resultDocument.documentElement.outerHTML);
-        $('#form').submit((e) => this.DownloadXML(e));
-        $('#form input.appendButton').unbind().on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
-        $('#form input.removeButton').unbind().on('click', (e) => this.RemoveElement(e));
-    }
-
-    private AddElement(template: Element): void {
-        var newNode = template.cloneNode(true);
-        (<HTMLElement>newNode).classList.remove("template");
-        template.parentElement.insertBefore(newNode, template);
-        $(newNode).children(".removeButton").first().unbind().on('click', (e) => this.RemoveElement(e));
-    }
-
-    private RemoveElement(event: JQuery.Event): void {
-        event.toElement.parentElement.remove();
-    }
-
-    private NodeFromString(xmlString: string): Node {
-        var doc = new DOMParser().parseFromString(xmlString, "text/xml");
-        return doc.documentElement;
-    }
-
-    private IsEmptyInput(element: HTMLInputElement): boolean {
-        return element.value === null || element.value === "";
-    }
-
-    private DownloadXML(event: JQuery.Event): void {
-        event.preventDefault();
-        this.SaveForm();
+    
+    private ClearFormErrors() {
+        $("#form").find("textarea, input[name]").each((_, elem: HTMLElement) => {
+            elem.classList.remove("invalid");
+        });
     }
 }

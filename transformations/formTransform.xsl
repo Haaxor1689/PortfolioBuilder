@@ -9,7 +9,6 @@
     <xsl:template match="/xs:schema">
         <form id="form">
             <xsl:apply-templates select="xs:element[@name='portfolio']/xs:complexType/xs:sequence/*" />
-            <input type="submit" value="Download XML" class="submitButton" />
         </form>
     </xsl:template>
 

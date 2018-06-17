@@ -185,7 +185,7 @@ export class FormManager {
             var input = <HTMLInputElement>$(element).children("textarea, input[name]")[0];
 
             // Attribute
-            if (element.parentElement.nodeName === "LABEL") {
+            if (element.parentElement.nodeName === "LABEL" && !this.IsEmptyInput(input)) {
                 xmlElement.setAttribute(nodeName, input.value);
                 return;
             }
@@ -229,15 +229,15 @@ export class FormManager {
         var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
         $("#form-position").html(resultDocument.documentElement.outerHTML);
         $('#form').submit((e) => this.DownloadXML(e));
-        $('#form input.appendButton').on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
-        $('#form input.removeButton').on('click', (e) => this.RemoveElement(e));
+        $('#form input.appendButton').unbind().on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
+        $('#form input.removeButton').unbind().on('click', (e) => this.RemoveElement(e));
     }
 
     private AddElement(template: Element): void {
         var newNode = template.cloneNode(true);
         (<HTMLElement>newNode).classList.remove("template");
         template.parentElement.insertBefore(newNode, template);
-        $('#form input.removeButton').on('click', (e) => this.RemoveElement(e));
+        $(newNode).children(".removeButton").first().unbind().on('click', (e) => this.RemoveElement(e));
     }
 
     private RemoveElement(event: JQuery.Event): void {

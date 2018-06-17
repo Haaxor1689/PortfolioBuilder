@@ -18,8 +18,8 @@
             <xs:sequence>
                 <xs:element name="Name" type="xs:token"/>
                 <xs:element name="Email" type="email-address-type"/>
-                <xs:element name="Headline" type="localized-token-type" minOccurs="0"/>
-                <xs:element name="Summary" type="localized-string-type"/>
+                <xs:element name="Headline" type="xs:token" minOccurs="0"/>
+                <xs:element name="Summary" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -36,7 +36,7 @@
                 <xs:element name="Stackoverflow" type="xs:token" minOccurs="0"/>
                 <xs:element name="Github" type="xs:token" minOccurs="0"/>
                 <xs:element name="Pinterest" type="xs:token" minOccurs="0"/>
-                <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="Link" type="required-link-type" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -73,12 +73,12 @@
     <xs:element name="Position">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Title" type="localized-token-type"/>
+                <xs:element name="Title" type="xs:token"/>
                 <xs:element name="Company" type="company-type"/>
-                <xs:element name="Location" type="localized-token-type"/>
+                <xs:element name="Location" type="xs:token"/>
                 <xs:element name="Start" type="xs:gYearMonth"/>
                 <xs:element name="End" type="xs:gYearMonth" minOccurs="0"/>
-                <xs:element name="Description" type="localized-string-type" minOccurs="0"/>
+                <xs:element name="Description" type="xs:string" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -88,10 +88,10 @@
             <xs:sequence>
                 <xs:element name="School" type="company-type"/>
                 <xs:element name="Degree" type="xs:token" minOccurs="0"/>
-                <xs:element name="Field" type="localized-with-url-type"/>
+                <xs:element name="Field" type="link-type"/>
                 <xs:element name="Start" type="xs:gYear"/>
                 <xs:element name="End" type="xs:gYear" minOccurs="0"/>
-                <xs:element name="Description" type="localized-string-type" minOccurs="0"/>
+                <xs:element name="Description" type="xs:string" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -99,8 +99,8 @@
     <xs:element name="Skill">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Field" type="localized-token-type"/>
-                <xs:element name="Description" type="localized-string-type"/>
+                <xs:element name="Field" type="xs:token"/>
+                <xs:element name="Description" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -112,63 +112,37 @@
                 <xs:element name="Type" type="xs:token" minOccurs="0"/>
                 <xs:element name="Start" type="xs:gYearMonth"/>
                 <xs:element name="End" type="xs:gYearMonth" minOccurs="0"/>
-                <xs:element name="Role" type="localized-token-type"/>
-                <xs:element name="Description" type="localized-string-type"/>
-                <xs:element name="Link" type="link-type" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="Role" type="xs:token"/>
+                <xs:element name="Description" type="xs:string"/>
+                <xs:element name="Link" type="required-link-type" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
     <!-- Other helper types -->
     <xs:complexType name="company-type">
-        <xs:complexContent>
-            <xs:extension base="localized-string-type">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
                 <xs:attribute name="Logo" type="xs:token"/>
                 <xs:attribute name="Url" type="xs:token"/>
             </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="localized-with-url-type">
-        <xs:complexContent>
-            <xs:extension base="localized-string-type">
-                <xs:attribute name="Url" type="xs:token"/>
-            </xs:extension>
-        </xs:complexContent>
+        </xs:simpleContent>
     </xs:complexType>
     <!---->
     <xs:complexType name="link-type">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="Url" type="xs:token"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <!---->
+    <xs:complexType name="required-link-type">
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="Url" type="xs:token" use="required"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    <!---->
-    <xs:complexType name="localized-string-type">
-        <xs:sequence>
-            <xs:element name="text" type="text-type" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-    <!---->
-    <xs:complexType name="localized-token-type">
-        <xs:sequence>
-            <xs:element name="text" type="text-type" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-    <!---->
-    <xs:complexType name="text-type">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="lang" type="language-type"/>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-    <!---->
-    <xs:simpleType name="language-type">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="en"/>
-            <xs:enumeration value="sk"/>
-        </xs:restriction>
-    </xs:simpleType>
     <!-- String regexes -->
     <xs:simpleType name="email-address-type">
         <xs:restriction base="xs:string">

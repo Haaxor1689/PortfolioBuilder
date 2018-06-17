@@ -160,7 +160,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                 }
                 var input = $(element).children("textarea, input[name]")[0];
                 // Attribute
-                if (element.parentElement.nodeName === "LABEL") {
+                if (element.parentElement.nodeName === "LABEL" && !_this.IsEmptyInput(input)) {
                     xmlElement.setAttribute(nodeName, input.value);
                     return;
                 }
@@ -204,15 +204,15 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
             $("#form-position").html(resultDocument.documentElement.outerHTML);
             $('#form').submit(function (e) { return _this.DownloadXML(e); });
-            $('#form input.appendButton').on('click', function (e) { return _this.AddElement(e.toElement.previousElementSibling); });
-            $('#form input.removeButton').on('click', function (e) { return _this.RemoveElement(e); });
+            $('#form input.appendButton').unbind().on('click', function (e) { return _this.AddElement(e.toElement.previousElementSibling); });
+            $('#form input.removeButton').unbind().on('click', function (e) { return _this.RemoveElement(e); });
         };
         FormManager.prototype.AddElement = function (template) {
             var _this = this;
             var newNode = template.cloneNode(true);
             newNode.classList.remove("template");
             template.parentElement.insertBefore(newNode, template);
-            $('#form input.removeButton').on('click', function (e) { return _this.RemoveElement(e); });
+            $(newNode).children(".removeButton").first().unbind().on('click', function (e) { return _this.RemoveElement(e); });
         };
         FormManager.prototype.RemoveElement = function (event) {
             event.toElement.parentElement.remove();

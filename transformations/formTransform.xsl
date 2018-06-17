@@ -82,7 +82,7 @@
             <xsl:when test="@type='xs:gYearMonth'">
                 <input type="text" name="{@name}" data-pattern="^\d{{4}}-\d{{2}}$" placeholder="yyyy-dd"/>
             </xsl:when>
-            <xsl:when test="@type='xs:string' or @type='localized-string-type'">
+            <xsl:when test="@type='xs:string'">
                 <textarea name="{@name}" rows="3"/>
             </xsl:when>
             <xsl:otherwise>

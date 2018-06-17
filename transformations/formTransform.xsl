@@ -18,7 +18,7 @@
                 <div class="template" data-required="{not(@minOccurs) or @minOccurs!=0}">
                     <xsl:call-template name="ref-body" />
                 </div>
-                <input type="button" class="appendButton" value="Add {@ref}"/>
+                <input type="button" class="appendButton button" value="Add {@ref}"/>
             </xsl:when>
             <xsl:otherwise>
                 <div data-required="{not(@minOccurs) or @minOccurs!=0}">
@@ -29,15 +29,16 @@
     </xsl:template>
 
     <xsl:template name="ref-body">
-        <h4>
+        <input type="button" class="collapseButton button" value="Collapse"/>
+        <span>
             <xsl:value-of select="@ref" />
-        </h4>
+        </span>
+        <xsl:apply-templates select="/xs:schema/*[@name=current()/@ref]" />
         <xsl:choose>
             <xsl:when test="@maxOccurs">
-                <input type="button" class="removeButton" value="Remove {@ref}"/>
+                <input type="button" class="removeButton button" value="Remove {@ref}"/>
             </xsl:when>
         </xsl:choose>
-        <xsl:apply-templates select="/xs:schema/*[@name=current()/@ref]" />
     </xsl:template>
     
     <xsl:template match="xs:element[@name and not(@type)]">
@@ -50,7 +51,7 @@
                 <label class="template" data-required="{not(@minOccurs) or @minOccurs!=0}">
                     <xsl:call-template name="element-body" />
                 </label>
-                <input type="button" class="appendButton" value="Add {@name}"/>
+                <input type="button" class="appendButton button" value="Add {@name}"/>
             </xsl:when>
             <xsl:otherwise>
                 <label data-required="{not(@minOccurs) or @minOccurs!=0}">
@@ -65,11 +66,6 @@
         <xsl:choose>
             <xsl:when test="not(@minOccurs=0)">
                 <span>*</span>
-            </xsl:when>
-        </xsl:choose>
-        <xsl:choose>
-            <xsl:when test="@maxOccurs">
-                <input type="button" class="removeButton" value="Remove {@name}"/>
             </xsl:when>
         </xsl:choose>
         <xsl:choose>
@@ -89,6 +85,11 @@
             </xsl:otherwise>
         </xsl:choose>
         <xsl:apply-templates select="/xs:schema/xs:complexType[@name=current()/@type]//xs:attribute" />
+        <xsl:choose>
+            <xsl:when test="@maxOccurs">
+                <input type="button" class="removeButton button" value="Remove {@name}"/>
+            </xsl:when>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template match="//xs:attribute">

@@ -5,7 +5,6 @@ form {
 form div {
     background-color: #f6f6f6;
     border-radius: 1rem;
-    padding: 0 .74rem;
     padding-bottom: .74rem;
     margin-bottom: .74rem;
     display: block;
@@ -14,24 +13,39 @@ form div {
 form div>div {
     background-color: #e6e6e6;
     border-radius: 1rem;
-    padding: 0 .74rem;
 }
 
 form div>div>div {
     background-color: #d6d6d6;
     border-radius: 1rem;
-    padding: 0 .74rem;
+}
+
+form div>span {
+    font-size: 1.7rem;
+    margin-left: 0.74rem;
+    padding: .5rem 0;
+    display: block;
+}
+
+form div div>span {
+    font-size: 1.4rem;
 }
 
 form label {
     display: block;
-    padding: 1rem 0;
+    padding: .75rem 0;
+    margin: 0 .75rem;
     cursor: default;
 }
 
 form label label {
     font-size: .75rem;
-    padding: 0 0;
+    padding: .2rem 0;
+    margin: 0;
+}
+
+form label input.button {
+    margin: 0;
 }
 
 form label>span {
@@ -44,7 +58,7 @@ form input, form textarea {
     padding: .74rem;
     background-color: #fff;
     border: 1px solid #bbb;
-    color: blue;
+    color: rgb(61, 61, 61);
     margin-top: .2rem;
     width: 100%;
     cursor: text;
@@ -59,51 +73,38 @@ form input.invalid, form textarea.invalid {
     border-color: rgb(255, 56, 56);
 }
 
-form input.appendButton {
+form input.button {
+    display: block;
     border-color: teal;
     background-color: white;
     color: teal;
     font-size: 1.2rem;
     font-weight: 300;
-    padding: .4rem 1rem;
+    padding: .4rem 0;
     border-radius: 1rem;
     width: 100%;
     align-items: flex-start;
     text-align: center;
-    cursor: cell;
+    cursor: pointer;
     -webkit-appearance: none;
     -moz-appearance: none;
+}
+
+form input.button:hover {
+    background-color: #e6e6e6;
 }
 
 form input.removeButton {
-    display: inline;
-    border-color: teal;
-    background-color: white;
-    color: teal;
     font-size: .75rem;
-    font-weight: 300;
-    padding: .4rem 1rem;
-    border-radius: .5rem;
-    text-align: center;
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
 }
 
-form>input.submitButton {
-    border: none;
-    background-color: teal;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: 300;
-    padding: .4rem 1rem;
+form input.collapseButton {
+    float: right;
+    max-width: 30%;
+    font-size: .75rem;
     border-radius: 1rem;
-    width: 100%;
-    align-items: flex-start;
-    text-align: center;
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    padding: .4rem 1rem;
+    margin: .75rem;
 }
 
 form .template {

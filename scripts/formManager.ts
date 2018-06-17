@@ -60,10 +60,10 @@ export class FormManager {
         return true;
     }
 
-    private ValidateForm(): boolean {
+    private ValidateForm(): string[] {
         this.ClearFormErrors();
 
-        var isValid = true;
+        var invalid: string[] = [];
         var formElements = $("#form");
         $("#form").find("label").each((_, elem: HTMLElement) => {
             if (elem.classList.contains("template") || elem.parentElement.classList.contains("template")) {
@@ -73,14 +73,14 @@ export class FormManager {
             var input = <HTMLInputElement>$(elem).children("textarea, input[name]")[0];
             if (!this.IsEmptyInput(input) && input.dataset.pattern && input.value.match(input.dataset.pattern) === null) {
                 input.classList.add("invalid");
-                isValid = false;
+                invalid.push(input.name);
             }
             if (elem.dataset.required === "true" && this.IsEmptyInput(input)) {
                 input.classList.add("invalid");
-                isValid = false;
+                invalid.push(input.name);
             }
         });
-        return isValid;
+        return invalid;
     }
 
     private FillForm(): void {
@@ -102,7 +102,8 @@ export class FormManager {
         var xmlList = xmlElement.children;
         var formList = formElement.children;
 
-        if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
+        // Assign value
+        if (xmlList.length === 0 && !formElement.classList.contains("button")) {
             var input = <HTMLInputElement>$(formElement).children("textarea, input[name]")[0];
             input.value = xmlList.length === 0 ? xmlElement.textContent : xmlElement.children[0].textContent;
             // Fill attribute fields
@@ -117,19 +118,15 @@ export class FormManager {
             return;
         }
 
-        // Skip form headers
-        var offset = formList[0].nodeName === "H4" ? 1 : 0;
-
+        var offset = 0;
         for (var i = 0; i < xmlList.length; ++i) {
-            var a = xmlList[i].outerHTML;
-            var b = formList[i + offset].outerHTML;
             var formElem = <HTMLElement>formList[i + offset];
-            // Skip form button elements
             // Skip unused optional elements
-            while ((formElem.dataset.required === "false" && xmlList[i].nodeName !== this.GetFieldName(formElem)) || formElem.classList.contains("appendButton") || formElem.classList.contains("removeButton")) {
+            // Skip form button elements
+            // Skip form headers
+            while ((formElem.dataset.required === "false" && xmlList[i].nodeName !== this.GetFieldName(formElem)) || formElem.classList.contains("button") || formElem.nodeName == "SPAN") {
                 ++offset;
                 formElem = <HTMLElement>formList[i + offset];
-                b = formList[i + offset].outerHTML;
             }
 
             // Add repeating elements
@@ -140,7 +137,6 @@ export class FormManager {
                     ++offset;
                 }
                 formElem = <HTMLElement>formList[i + offset];
-                b = formList[i + offset].outerHTML;
             }
 
             this.ImportChildNodes(xmlList[i], formElem);
@@ -148,9 +144,14 @@ export class FormManager {
     }
 
     private SaveForm(): boolean {
-        if (!this.ValidateForm()) {
+        var invalid = this.ValidateForm();
+        if (invalid.length !== 0) {
             $("#export-error").removeClass("hidden");
-            $("#export-error").text("Fill out all required fields before exporting.");
+            var errorMessage = "Fill out all required fields before exporting. Invalid fields:";
+            for (var i = 0; i < invalid.length; ++i) {
+                errorMessage += "\n   - " + invalid[i];
+            }
+            $("#export-error").text(errorMessage);
             return false;
         }
         $("#export-error").addClass("hidden");
@@ -169,7 +170,7 @@ export class FormManager {
 
             var nodeName: string;
             if (element.nodeName === "DIV") {
-                nodeName = $(element).children("h4")[0].textContent;
+                nodeName = $(element).children("span")[0].textContent;
             } else {
                 nodeName = $(element).children("textarea, input[name]")[0].getAttribute("name");
             }
@@ -204,7 +205,8 @@ export class FormManager {
         var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
         $("#form-position").html(resultDocument.documentElement.outerHTML);
         $('#form input.appendButton').unbind().on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
-        $('#form input.removeButton').unbind().on('click', (e) => this.RemoveElement(e));
+        $('#form input.removeButton').unbind().on('click', (e) => this.RemoveElement(<HTMLInputElement>e.toElement));
+        $('#form input.collapseButton').unbind().on('click', (e) => this.CollapseElement(<HTMLInputElement>e.toElement));
     }
 
     private DownloadXML(): void {
@@ -239,17 +241,32 @@ export class FormManager {
         saveAs(blob);
     }
 
-    // Add/remove button actions
+    // Form button actions
     private AddElement(template: Element): void {
         var newNode = template.cloneNode(true);
         (<HTMLElement>newNode).classList.remove("template");
         template.parentElement.insertBefore(newNode, template);
-        $(newNode).children(".removeButton").first().unbind().on('click', (e) => this.RemoveElement(e));
-        
+        $(newNode).find(".appendButton").unbind().on('click', (e) => this.AddElement(e.toElement.previousElementSibling));
+        $(newNode).find(".removeButton").unbind().on('click', (e) => this.RemoveElement(<HTMLInputElement>e.toElement));
+        $(newNode).find(".collapseButton").unbind().on('click', (e) => this.CollapseElement(<HTMLInputElement>e.toElement));
     }
 
-    private RemoveElement(event: JQuery.Event): void {
-        event.toElement.parentElement.remove();
+    private RemoveElement(element: HTMLInputElement): void {
+        element.parentElement.remove();
+    }
+
+    private CollapseElement(element: HTMLInputElement): void {
+        if (element.value === "Collapse") {
+            $(element).siblings().not("span").each((_, element) => {
+                element.classList.add("hidden");
+            });
+            element.value = "Expand";
+        } else {
+            $(element).siblings().not("span").each((_, element) => {
+                element.classList.remove("hidden");
+            });
+            element.value = "Collapse";
+        }
     }
 
     // Helper functions
@@ -264,7 +281,7 @@ export class FormManager {
 
     private GetFieldName(formElement: HTMLElement): string {
         if (formElement.nodeName === "DIV") {
-            return $(formElement).children("H4")[0].innerText;
+            return $(formElement).children("span")[0].innerText;
         } else {
             return $(formElement).children("textarea, input[name]")[0].getAttribute("name");
         }

@@ -49,7 +49,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
         FormManager.prototype.ValidateForm = function () {
             var _this = this;
             this.ClearFormErrors();
-            var isValid = true;
+            var invalid = [];
             var formElements = $("#form");
             $("#form").find("label").each(function (_, elem) {
                 if (elem.classList.contains("template") || elem.parentElement.classList.contains("template")) {
@@ -58,14 +58,14 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                 var input = $(elem).children("textarea, input[name]")[0];
                 if (!_this.IsEmptyInput(input) && input.dataset.pattern && input.value.match(input.dataset.pattern) === null) {
                     input.classList.add("invalid");
-                    isValid = false;
+                    invalid.push(input.name);
                 }
                 if (elem.dataset.required === "true" && _this.IsEmptyInput(input)) {
                     input.classList.add("invalid");
-                    isValid = false;
+                    invalid.push(input.name);
                 }
             });
-            return isValid;
+            return invalid;
         };
         FormManager.prototype.FillForm = function () {
             if (!this.xmlDocument) {
@@ -82,7 +82,8 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
         FormManager.prototype.ImportChildNodes = function (xmlElement, formElement) {
             var xmlList = xmlElement.children;
             var formList = formElement.children;
-            if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
+            // Assign value
+            if (xmlList.length === 0 && !formElement.classList.contains("button")) {
                 var input = $(formElement).children("textarea, input[name]")[0];
                 input.value = xmlList.length === 0 ? xmlElement.textContent : xmlElement.children[0].textContent;
                 // Fill attribute fields
@@ -96,18 +97,15 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                 }
                 return;
             }
-            // Skip form headers
-            var offset = formList[0].nodeName === "H4" ? 1 : 0;
+            var offset = 0;
             for (var i = 0; i < xmlList.length; ++i) {
-                var a = xmlList[i].outerHTML;
-                var b = formList[i + offset].outerHTML;
                 var formElem = formList[i + offset];
-                // Skip form button elements
                 // Skip unused optional elements
-                while ((formElem.dataset.required === "false" && xmlList[i].nodeName !== this.GetFieldName(formElem)) || formElem.classList.contains("appendButton") || formElem.classList.contains("removeButton")) {
+                // Skip form button elements
+                // Skip form headers
+                while ((formElem.dataset.required === "false" && xmlList[i].nodeName !== this.GetFieldName(formElem)) || formElem.classList.contains("button") || formElem.nodeName == "SPAN") {
                     ++offset;
                     formElem = formList[i + offset];
-                    b = formList[i + offset].outerHTML;
                 }
                 // Add repeating elements
                 if (formElem.classList.contains("template")) {
@@ -117,15 +115,19 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                         ++offset;
                     }
                     formElem = formList[i + offset];
-                    b = formList[i + offset].outerHTML;
                 }
                 this.ImportChildNodes(xmlList[i], formElem);
             }
         };
         FormManager.prototype.SaveForm = function () {
-            if (!this.ValidateForm()) {
+            var invalid = this.ValidateForm();
+            if (invalid.length !== 0) {
                 $("#export-error").removeClass("hidden");
-                $("#export-error").text("Fill out all required fields before exporting.");
+                var errorMessage = "Fill out all required fields before exporting. Invalid fields:";
+                for (var i = 0; i < invalid.length; ++i) {
+                    errorMessage += "\n   - " + invalid[i];
+                }
+                $("#export-error").text(errorMessage);
                 return false;
             }
             $("#export-error").addClass("hidden");
@@ -142,7 +144,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                 }
                 var nodeName;
                 if (element.nodeName === "DIV") {
-                    nodeName = $(element).children("h4")[0].textContent;
+                    nodeName = $(element).children("span")[0].textContent;
                 }
                 else {
                     nodeName = $(element).children("textarea, input[name]")[0].getAttribute("name");
@@ -173,7 +175,8 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             var resultDocument = xsltProcessor.transformToDocument(this.NodeFromString(schema));
             $("#form-position").html(resultDocument.documentElement.outerHTML);
             $('#form input.appendButton').unbind().on('click', function (e) { return _this.AddElement(e.toElement.previousElementSibling); });
-            $('#form input.removeButton').unbind().on('click', function (e) { return _this.RemoveElement(e); });
+            $('#form input.removeButton').unbind().on('click', function (e) { return _this.RemoveElement(e.toElement); });
+            $('#form input.collapseButton').unbind().on('click', function (e) { return _this.CollapseElement(e.toElement); });
         };
         FormManager.prototype.DownloadXML = function () {
             if (!this.SaveForm()) {
@@ -202,16 +205,32 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             var blob = new File([stringRepresentation], "portfolio.html", { type: "text/html" });
             saveAs(blob);
         };
-        // Add/remove button actions
+        // Form button actions
         FormManager.prototype.AddElement = function (template) {
             var _this = this;
             var newNode = template.cloneNode(true);
             newNode.classList.remove("template");
             template.parentElement.insertBefore(newNode, template);
-            $(newNode).children(".removeButton").first().unbind().on('click', function (e) { return _this.RemoveElement(e); });
+            $(newNode).find(".appendButton").unbind().on('click', function (e) { return _this.AddElement(e.toElement.previousElementSibling); });
+            $(newNode).find(".removeButton").unbind().on('click', function (e) { return _this.RemoveElement(e.toElement); });
+            $(newNode).find(".collapseButton").unbind().on('click', function (e) { return _this.CollapseElement(e.toElement); });
         };
-        FormManager.prototype.RemoveElement = function (event) {
-            event.toElement.parentElement.remove();
+        FormManager.prototype.RemoveElement = function (element) {
+            element.parentElement.remove();
+        };
+        FormManager.prototype.CollapseElement = function (element) {
+            if (element.value === "Collapse") {
+                $(element).siblings().not("span").each(function (_, element) {
+                    element.classList.add("hidden");
+                });
+                element.value = "Expand";
+            }
+            else {
+                $(element).siblings().not("span").each(function (_, element) {
+                    element.classList.remove("hidden");
+                });
+                element.value = "Collapse";
+            }
         };
         // Helper functions
         FormManager.prototype.NodeFromString = function (xmlString) {
@@ -223,7 +242,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
         };
         FormManager.prototype.GetFieldName = function (formElement) {
             if (formElement.nodeName === "DIV") {
-                return $(formElement).children("H4")[0].innerText;
+                return $(formElement).children("span")[0].innerText;
             }
             else {
                 return $(formElement).children("textarea, input[name]")[0].getAttribute("name");

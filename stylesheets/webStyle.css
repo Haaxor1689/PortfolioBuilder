@@ -20,8 +20,6 @@ body,h1,h2,h3,h4,h5,h6 {
     display: none
 }
 
-/* Darker background on mouse-over */
-
 .btn:hover {
     background-color: rgb(0, 84, 84);
 }
@@ -59,12 +57,10 @@ table td, table td * {
     background: #222;
 }
 
-/* Set the width of the sidebar to 120px */
 .w3-sidebar.w3-hide-small {
     width: 140px;
 }
 
-/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
 #main {
     margin-left: 140px
 }

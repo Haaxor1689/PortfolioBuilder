@@ -130,9 +130,48 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
         };
         FormManager.prototype.SaveForm = function () {
             if (!this.ValidateForm()) {
-                console.log("Form isn't valid.");
                 return;
             }
+            // Create new XML document
+            this.xmlDocument = new DOMParser().parseFromString("<portfolio></portfolio>", "text/xml");
+            this.ExportChildNodes(this.xmlDocument.documentElement, $("#form")[0]);
+            // Serialize to string
+            var stringRepresentation = new XMLSerializer().serializeToString(this.xmlDocument);
+            // Add missing XML declaration
+            if (stringRepresentation.match("\<\?xml version") === null) {
+                stringRepresentation = '<?xml version="1.0" encoding="UTF-8"?>\n' + stringRepresentation;
+            }
+            // Save
+            var blob = new File([stringRepresentation], "portfolio.xml", { type: "text/xml" });
+            saveAs(blob);
+        };
+        FormManager.prototype.ExportChildNodes = function (xmlElement, formElement) {
+            var _this = this;
+            $(formElement).children("div, label").each(function (_, element) {
+                if (element.classList.contains("template")) {
+                    return;
+                }
+                var nodeName;
+                if (element.nodeName === "DIV") {
+                    nodeName = $(element).children("h4")[0].textContent;
+                }
+                else {
+                    nodeName = $(element).children("textarea, input[name]")[0].getAttribute("name");
+                }
+                var input = $(element).children("textarea, input[name]")[0];
+                // Attribute
+                if (element.parentElement.nodeName === "LABEL") {
+                    xmlElement.setAttribute(nodeName, input.value);
+                    return;
+                }
+                var newNode = _this.xmlDocument.createElement(nodeName);
+                newNode.textContent = input ? input.value : undefined;
+                xmlElement.appendChild(newNode);
+                _this.ExportChildNodes(newNode, element);
+                if (newNode.children.length === 0 && newNode.attributes.length === 0 && newNode.textContent === "") {
+                    newNode.remove();
+                }
+            });
         };
         FormManager.prototype.GetFieldName = function (formElement) {
             if (formElement.nodeName === "DIV") {

@@ -150,9 +150,55 @@ export class FormManager {
 
     private SaveForm(): void {
         if (!this.ValidateForm()) {
-            console.log("Form isn't valid.");
             return;
         }
+
+        // Create new XML document
+        this.xmlDocument = new DOMParser().parseFromString("<portfolio></portfolio>", "text/xml");
+
+        this.ExportChildNodes(this.xmlDocument.documentElement, <HTMLElement>$("#form")[0]);
+
+        // Serialize to string
+        var stringRepresentation = new XMLSerializer().serializeToString(this.xmlDocument);
+        // Add missing XML declaration
+        if (stringRepresentation.match("\<\?xml version") === null) {
+            stringRepresentation = '<?xml version="1.0" encoding="UTF-8"?>\n' + stringRepresentation;
+        }
+        // Save
+        var blob = new File([stringRepresentation], "portfolio.xml", {type: "text/xml"});
+        saveAs(blob);
+    }
+
+    private ExportChildNodes(xmlElement: Element, formElement: HTMLElement): void {
+        $(formElement).children("div, label").each((_, element: HTMLElement) => {
+            if (element.classList.contains("template")) {
+                return;
+            }
+
+            var nodeName: string;
+            if (element.nodeName === "DIV") {
+                nodeName = $(element).children("h4")[0].textContent;
+            } else {
+                nodeName = $(element).children("textarea, input[name]")[0].getAttribute("name");
+            }
+
+            var input = <HTMLInputElement>$(element).children("textarea, input[name]")[0];
+
+            // Attribute
+            if (element.parentElement.nodeName === "LABEL") {
+                xmlElement.setAttribute(nodeName, input.value);
+                return;
+            }
+
+            var newNode = this.xmlDocument.createElement(nodeName);
+
+            newNode.textContent = input ? input.value : undefined;
+            xmlElement.appendChild(newNode);
+            this.ExportChildNodes(newNode, element);
+            if (newNode.children.length === 0 && newNode.attributes.length === 0 && newNode.textContent === "") {
+                newNode.remove();
+            }
+        })
     }
 
     private GetFieldName(formElement: HTMLElement): string {

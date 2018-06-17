@@ -4,6 +4,7 @@ require.config({
 	paths: {
 		'jquery': 'lib/jquery-3.3.1.min',
 		'text': 'lib/text',
+		'FileSaver': 'lib/FileSaver'
 	},
 
 	shim: {
@@ -13,6 +14,6 @@ require.config({
 	}
 });
 
-require(['main', 'jquery', 'text'], (main, $) => {
+require(['main', 'jquery', 'text', 'FileSaver'], (main, $, FileSaver) => {
 	main.Main();
 }); 

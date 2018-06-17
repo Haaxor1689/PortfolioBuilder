@@ -55,6 +55,11 @@ form textarea {
     resize: vertical;
 }
 
+form input.invalid, form textarea.invalid {
+    background-color: rgb(255, 180, 180);
+    border-color: rgb(255, 56, 56);
+}
+
 form input.appendButton {
     border-color: teal;
     background-color: white;

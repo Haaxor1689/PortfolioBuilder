@@ -55,6 +55,29 @@ export class FormManager {
         return true;
     }
 
+    private ValidateForm(): boolean {
+        this.ClearFormErrors();
+
+        var isValid = true;
+        var formElements = $("#form");
+        $("#form").find("label").each((_, elem: HTMLElement) => {
+            if (elem.classList.contains("template") || elem.parentElement.classList.contains("template")) {
+                return;
+            }
+
+            var input = <HTMLInputElement>$(elem).children("textarea, input[name]")[0];
+            if (!this.IsEmptyInput(input) && input.dataset.pattern && input.value.match(input.dataset.pattern) === null) {
+                input.classList.add("invalid");
+                isValid = false;
+            }
+            if (elem.dataset.required === "true" && this.IsEmptyInput(input)) {
+                input.classList.add("invalid");
+                isValid = false;
+            }
+        });
+        return isValid;
+    }
+
     private FillForm(): void {
         if (!this.xmlDocument) {
             $("#xml-load-error").removeClass("hidden");
@@ -67,10 +90,16 @@ export class FormManager {
         }
 
         this.GenerateForm();
-        this.IterateChildNodes(this.xmlDocument.documentElement, <HTMLElement>$("#form")[0]);
+        this.ImportChildNodes(this.xmlDocument.documentElement, <HTMLElement>$("#form")[0]);
     }
 
-    private IterateChildNodes(xmlElement: Element, formElement: HTMLElement): void {
+    private ClearFormErrors() {
+        $("#form").find("textarea, input[name]").each((_, elem: HTMLElement) => {
+            elem.classList.remove("invalid");
+        });
+    }
+
+    private ImportChildNodes(xmlElement: Element, formElement: HTMLElement): void {
         var xmlList = xmlElement.children;
         var formList = formElement.children;
 
@@ -115,7 +144,14 @@ export class FormManager {
                 b = formList[i + offset].outerHTML;
             }
 
-            this.IterateChildNodes(xmlList[i], formElem);
+            this.ImportChildNodes(xmlList[i], formElem);
+        }
+    }
+
+    private SaveForm(): void {
+        if (!this.ValidateForm()) {
+            console.log("Form isn't valid.");
+            return;
         }
     }
 
@@ -167,7 +203,12 @@ export class FormManager {
         return doc.documentElement;
     }
 
+    private IsEmptyInput(element: HTMLInputElement): boolean {
+        return element.value === null || element.value === "";
+    }
+
     private DownloadXML(event: JQuery.Event): void {
         event.preventDefault();
+        this.SaveForm();
     }
 }

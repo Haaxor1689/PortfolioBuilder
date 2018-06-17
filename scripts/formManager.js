@@ -47,6 +47,27 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             }
             return true;
         };
+        FormManager.prototype.ValidateForm = function () {
+            var _this = this;
+            this.ClearFormErrors();
+            var isValid = true;
+            var formElements = $("#form");
+            $("#form").find("label").each(function (_, elem) {
+                if (elem.classList.contains("template") || elem.parentElement.classList.contains("template")) {
+                    return;
+                }
+                var input = $(elem).children("textarea, input[name]")[0];
+                if (!_this.IsEmptyInput(input) && input.dataset.pattern && input.value.match(input.dataset.pattern) === null) {
+                    input.classList.add("invalid");
+                    isValid = false;
+                }
+                if (elem.dataset.required === "true" && _this.IsEmptyInput(input)) {
+                    input.classList.add("invalid");
+                    isValid = false;
+                }
+            });
+            return isValid;
+        };
         FormManager.prototype.FillForm = function () {
             if (!this.xmlDocument) {
                 $("#xml-load-error").removeClass("hidden");
@@ -57,9 +78,14 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                 return;
             }
             this.GenerateForm();
-            this.IterateChildNodes(this.xmlDocument.documentElement, $("#form")[0]);
+            this.ImportChildNodes(this.xmlDocument.documentElement, $("#form")[0]);
         };
-        FormManager.prototype.IterateChildNodes = function (xmlElement, formElement) {
+        FormManager.prototype.ClearFormErrors = function () {
+            $("#form").find("textarea, input[name]").each(function (_, elem) {
+                elem.classList.remove("invalid");
+            });
+        };
+        FormManager.prototype.ImportChildNodes = function (xmlElement, formElement) {
             var xmlList = xmlElement.children;
             var formList = formElement.children;
             if (xmlList.length === 0 || xmlElement.children[0].nodeName === "text") {
@@ -99,7 +125,13 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                     formElem = formList[i + offset];
                     b = formList[i + offset].outerHTML;
                 }
-                this.IterateChildNodes(xmlList[i], formElem);
+                this.ImportChildNodes(xmlList[i], formElem);
+            }
+        };
+        FormManager.prototype.SaveForm = function () {
+            if (!this.ValidateForm()) {
+                console.log("Form isn't valid.");
+                return;
             }
         };
         FormManager.prototype.GetFieldName = function (formElement) {
@@ -150,8 +182,12 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             var doc = new DOMParser().parseFromString(xmlString, "text/xml");
             return doc.documentElement;
         };
+        FormManager.prototype.IsEmptyInput = function (element) {
+            return element.value === null || element.value === "";
+        };
         FormManager.prototype.DownloadXML = function (event) {
             event.preventDefault();
+            this.SaveForm();
         };
         return FormManager;
     }());

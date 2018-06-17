@@ -77,10 +77,10 @@
             <xsl:when test="@type='email-address-type'">
                 <input type="email" name="{@name}"/>
             </xsl:when>
-            <xsl:when test="@type='xs:gYear'"><input type="text" name="{@name}" pattern="\d{4}" placeholder="yyyy" />
+            <xsl:when test="@type='xs:gYear'"><input type="text" name="{@name}" data-pattern="^\d{{4}}$" placeholder="yyyy" />
             </xsl:when>
             <xsl:when test="@type='xs:gYearMonth'">
-                <input type="text" name="{@name}" data-pattern="\d{4}-\d{2}" placeholder="yyyy-dd"/>
+                <input type="text" name="{@name}" data-pattern="^\d{{4}}-\d{{2}}$" placeholder="yyyy-dd"/>
             </xsl:when>
             <xsl:when test="@type='xs:string' or @type='localized-string-type'">
                 <textarea name="{@name}" rows="3"/>
@@ -93,14 +93,14 @@
     </xsl:template>
 
     <xsl:template match="//xs:attribute">
-        <label>
+        <label data-required="{@use='required'}">
             <xsl:value-of select="@name" />
             <xsl:choose>
                 <xsl:when test="@use='required'">
                     <span>*</span>
                 </xsl:when>
             </xsl:choose>
-            <input type="text" name="{@name}" data-required="{@use='required'}" />
+            <input type="text" name="{@name}" />
         </label>
     </xsl:template>
 

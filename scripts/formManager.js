@@ -1,4 +1,4 @@
-define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transformations/formTransform.xsl", "text!../transformations/webTransform.xsl", "typings/he"], function (require, exports, schema, formTransform, webTransform, he) {
+define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transformations/formTransform.xsl", "text!../transformations/mdTransform.xsl", "text!../transformations/webTransform.xsl", "typings/he"], function (require, exports, schema, formTransform, mdTransform, webTransform, he) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var FormManager = /** @class */ (function () {
@@ -7,7 +7,8 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             $("#file-input").unbind().on('change', function (e) { return _this.LoadXML(e); });
             $('#upload-xml').unbind().on("click", function () { return _this.FillForm(); });
             $('#download-xml').unbind().on("click", function () { return _this.DownloadXML(); });
-            $('#export-html').unbind().on("click", function () { return _this.ExportHTML(webTransform); });
+            $('#export-html').unbind().on("click", function () { return _this.ExportHTML(webTransform, "portfolio.html"); });
+            $('#export-md').unbind().on("click", function () { return _this.ExportText(mdTransform, "portfolio.md"); });
             this.GenerateForm();
             // Custom schema buttons
             $('#download-schema').unbind().on("click", function () {
@@ -26,7 +27,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
                     $("#custom-transform-upload-error").text("Please select a non empty file.");
                     return;
                 }
-                _this.ExportHTML(_this.customTransform);
+                _this.ExportHTML(_this.customTransform, "customPortfolio.html");
             });
         }
         Object.defineProperty(FormManager.prototype, "currentSchema", {
@@ -241,7 +242,7 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             // Save
             saveAs(new File([stringRepresentation], "portfolio.xml", { type: "text/xml" }));
         };
-        FormManager.prototype.ExportHTML = function (transform) {
+        FormManager.prototype.ExportHTML = function (transform, filename) {
             if (!this.SaveForm()) {
                 return;
             }
@@ -251,8 +252,19 @@ define(["require", "exports", "text!../portfolioSchema.xsd", "text!../transforma
             // Serialize to string
             var stringRepresentation = new XMLSerializer().serializeToString(resultDocument);
             // Save
-            var blob = new File([stringRepresentation], "portfolio.html", { type: "text/html" });
-            saveAs(blob);
+            saveAs(new File([stringRepresentation], filename, { type: "text/html" }));
+        };
+        FormManager.prototype.ExportText = function (transform, filename) {
+            if (!this.SaveForm()) {
+                return;
+            }
+            var xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(this.NodeFromString(transform));
+            var resultDocument = xsltProcessor.transformToDocument(this.xmlDocument);
+            // Serialize to string
+            var stringRepresentation = resultDocument.documentElement.innerText.trim();
+            // Save
+            saveAs(new File([stringRepresentation], filename, { type: "text" }));
         };
         // Form button actions
         FormManager.prototype.AddElement = function (template) {

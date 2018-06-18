@@ -1,5 +1,6 @@
 import * as schema from "text!../portfolioSchema.xsd";
 import * as formTransform from "text!../transformations/formTransform.xsl";
+import * as mdTransform from "text!../transformations/mdTransform.xsl";
 import * as webTransform from "text!../transformations/webTransform.xsl";
 
 // xmllint
@@ -23,7 +24,8 @@ export class FormManager {
         $("#file-input").unbind().on('change', (e) => this.LoadXML(e));
         $('#upload-xml').unbind().on("click",() => this.FillForm());
         $('#download-xml').unbind().on("click", () => this.DownloadXML());
-        $('#export-html').unbind().on("click", () => this.ExportHTML(webTransform));
+        $('#export-html').unbind().on("click", () => this.ExportHTML(webTransform, "portfolio.html"));
+        $('#export-md').unbind().on("click", () => this.ExportText(mdTransform, "portfolio.md"));
         this.GenerateForm();
         
         // Custom schema buttons
@@ -44,7 +46,7 @@ export class FormManager {
                 $("#custom-transform-upload-error").text("Please select a non empty file.");
                 return;
             }
-            this.ExportHTML(this.customTransform);
+            this.ExportHTML(this.customTransform, "customPortfolio.html");
         });
     }
 
@@ -278,7 +280,7 @@ export class FormManager {
         saveAs(new File([stringRepresentation], "portfolio.xml", {type: "text/xml"}));
     }
 
-    private ExportHTML(transform: string): void {
+    private ExportHTML(transform: string, filename: string): void {
         if (!this.SaveForm()) {
             return;
         }
@@ -290,8 +292,22 @@ export class FormManager {
         // Serialize to string
         var stringRepresentation = new XMLSerializer().serializeToString(resultDocument);
         // Save
-        var blob = new File([stringRepresentation], "portfolio.html", {type: "text/html"});
-        saveAs(blob);
+        saveAs(new File([stringRepresentation], filename, {type: "text/html"}));
+    }
+
+    private ExportText(transform: string, filename: string): void {
+        if (!this.SaveForm()) {
+            return;
+        }
+        
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(this.NodeFromString(transform));
+        var resultDocument = xsltProcessor.transformToDocument(this.xmlDocument);
+
+        // Serialize to string
+        var stringRepresentation = resultDocument.documentElement.innerText.trim();
+        // Save
+        saveAs(new File([stringRepresentation], filename, {type: "text"}));
     }
 
     // Form button actions

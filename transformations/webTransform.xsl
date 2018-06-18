@@ -234,14 +234,19 @@
             <p>
                 <xsl:value-of select="Description"/>
             </p>
-            <p>
-                <h5>Additional links:</h5>
-                <ul>
-                    <xsl:for-each select="Link">
-                        <li><xsl:apply-templates select="." /></li>
-                    </xsl:for-each>
-                </ul>
-            </p>
+            <xsl:choose>
+                <xsl:when test="Link">
+                    <p>
+                        <h5>Additional links:</h5>
+                        <ul>
+                            <xsl:for-each select="Link">
+                                <li><xsl:apply-templates select="." /></li>
+                            </xsl:for-each>
+                        </ul>
+                    </p>
+                </xsl:when>
+            </xsl:choose>
+            
         </div>
     </xsl:template>
     <!-- Link -->

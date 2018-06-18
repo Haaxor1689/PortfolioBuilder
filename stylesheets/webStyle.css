@@ -61,6 +61,11 @@ table td, table td * {
     width: 140px;
 }
 
+.w3-padding-64 {
+    padding-top: 0!important;
+    padding-bottom: 32px!important;
+}
+
 #main {
     margin-left: 140px
 }

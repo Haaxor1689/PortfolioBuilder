@@ -237,7 +237,7 @@
             <xsl:choose>
                 <xsl:when test="Link">
                     <p>
-                        <h5>Additional links:</h5>
+                        <h5 class="w3-text-light-grey">Additional links:</h5>
                         <ul>
                             <xsl:for-each select="Link">
                                 <li><xsl:apply-templates select="." /></li>

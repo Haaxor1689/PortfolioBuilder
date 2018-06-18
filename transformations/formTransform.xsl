@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- For more informations on editing limitations visit:                              -->
+<!-- https://github.com/Haaxor1689/PortfolioBuilder/wiki/Customizing-portfolio-schema -->
 <xsl:transform version="1.0" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
@@ -12,6 +14,7 @@
         </form>
     </xsl:template>
 
+    <!-- Form sections -->
     <xsl:template match="xs:element[@ref]">
         <xsl:choose>
             <xsl:when test="@maxOccurs">
@@ -27,7 +30,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
     <xsl:template name="ref-body">
         <input type="button" class="collapseButton button" value="Collapse"/>
         <span>
@@ -44,7 +47,8 @@
     <xsl:template match="xs:element[@name and not(@type)]">
         <xsl:apply-templates select="xs:complexType/xs:sequence/*" />
     </xsl:template>
-
+    
+    <!-- Form input fields -->
     <xsl:template match="xs:element[@name and @type]">
         <xsl:choose>
             <xsl:when test="@maxOccurs">

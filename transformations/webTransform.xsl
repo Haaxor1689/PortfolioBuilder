@@ -58,52 +58,52 @@
                 <footer>
                     <xsl:if test="Social/Linkedin">
                         <a target="_blank" href="https://www.linkedin.com/in/{Social/Linkedin}">
-                            <i title="LinkedIn" class="postfix fa fa-linkedin"/>
+                            <i title="LinkedIn" class="fa fa-linkedin"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Facebook">
                         <a target="_blank" href="https://www.facebook.com/{Social/Facebook}">
-                            <i title="Facebook" class="postfix fa fa-facebook"/>
+                            <i title="Facebook" class="fa fa-facebook"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Instagram">
                         <a target="_blank" href="https://www.instagram.com/{Social/Instagram}">
-                            <i title="Instagram" class="postfix fa fa-instagram"/>
+                            <i title="Instagram" class="fa fa-instagram"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Youtube">
                         <a target="_blank" href="https://www.youtube.com/channel/{Social/Youtube}">
-                            <i title="Youtube" class="postfix fa fa-youtube"/>
+                            <i title="Youtube" class="fa fa-youtube"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Twitch">
                         <a target="_blank" href="https://www.twitch.tv/{Social/Twitch}">
-                            <i title="Twitch" class="postfix fa fa-twitch"/>
+                            <i title="Twitch" class="fa fa-twitch"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Twitter">
                         <a target="_blank" href="https://twitter.com/{Social/Twitter}">
-                            <i title="Twitter" class="postfix fa fa-twitter"/>
+                            <i title="Twitter" class="fa fa-twitter"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Stackoverflow">
                         <a target="_blank" href="https://stackoverflow.com/users/{Social/Stackoverflow}">
-                            <i title="Stack Overflow" class="postfix fa fa-stack-overflow"/>
+                            <i title="Stack Overflow" class="fa fa-stack-overflow"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Github">
                         <a target="_blank" href="https://github.com/{Social/Github}">
-                            <i title="GitHub" class="postfix fa fa-github"/>
+                            <i title="GitHub" class="fa fa-github"/>
                         </a>
                     </xsl:if>
                     <xsl:if test="Social/Pinterest">
                         <a target="_blank" href="https://pinterest.com/{Social/Pinterest}/">
-                            <i title="Pinteres" class="postfix fa fa-pinterest"/>
+                            <i title="Pinteres" class="fa fa-pinterest"/>
                         </a>
                     </xsl:if>
                     <xsl:for-each select="Social/Link">
                         <a target="_blank" href="{@Url}">
-                            <i title="{.}" class="postfix fa fa-link"/>
+                            <i title="{.}" class="fa fa-link"/>
                         </a>
                     </xsl:for-each>
                     <!-- End footer -->

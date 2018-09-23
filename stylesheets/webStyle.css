@@ -1,78 +1,104 @@
-body,h1,h2,h3,h4,h5,h6 {
-    font-family: "Montserrat", sans-serif
-}
-
-.centered {
-    margin: 0 auto;
-    max-width: 900px;
-}
-
-.btn {
-    background-color: teal;
-    border: none;
-    color: white;
-    padding: 6px 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.hidden {
-    display: none
-}
-
-.btn:hover {
-    background-color: rgb(0, 84, 84);
-}
-
-table td, table td * {
-    vertical-align: top;
-}
-
-.indented {
-    padding-left: 1.5em;
-    text-indent:-1.5em;
-}
-
-.inline {
-    display: inline;
-}
-
-.w3-row-padding img {
-    margin-bottom: 12px
-}
-
-.smaller {
-    font-size: 80%;
-}
-
-.right-margin {
-    margin-right: 5px;
-}
-
-.left-margin {
-    margin-left: 5px;
-}
-
-.grey-background {
+html {
     background: #222;
+    font-family: "Montserrat", sans-serif;
+    color: #222;
 }
 
-.w3-sidebar.w3-hide-small {
-    width: 140px;
+body {
+    margin: 0 auto 0 auto;
+    max-width: 720px;
+    background: #eee;
 }
 
-.w3-padding-64 {
-    padding-top: 0!important;
-    padding-bottom: 32px!important;
+.content {
+    padding: 2rem 4rem 4rem 4rem;
 }
 
-#main {
-    margin-left: 140px
+nav, footer{
+    background: #000;
+    padding: 2rem 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
-/* Remove margins from "page content" on small screens */
-@media only screen and (max-width: 600px) {
-    #main {
-        margin-left: 0
-    }
+nav a {
+    text-align: center;
+    flex-grow: 1;
+    margin: .5rem 1rem;
+}
+
+header {
+    text-align: center;
+    background: #444;
+    color: #ddd;
+    padding: 2rem 0;
+}
+
+h2 {
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #444;
+}
+
+h3 {
+    display: inline-block;
+}
+
+h6 {
+    font-size: 1rem;
+    display: inline-block;
+}
+
+h3, h4, h5, h6, p {
+    margin: 0 0 .75rem 0;
+}
+
+a:link, a:visited {
+    color: #888;
+    text-decoration-style: dashed;
+}
+
+ul {
+    margin: 0;
+}
+
+p {
+    display: list-item;
+    list-style-type: disc;
+    list-style-position: inside;
+    text-indent: -1.35rem;
+    padding-left: 1.35rem;
+}
+
+.summary-text {
+    display: inline-block;
+    text-indent: -1rem;
+    padding-left: 0;
+}
+
+.portfolio-item {
+    padding: 1rem 0 1rem 1rem;
+}
+
+.portfolio-item > *:first-child {
+    text-indent: -1rem;
+}
+
+.portfolio-item:first-of-type {
+    padding-top: 0;
+}
+
+.skill-title {
+    padding-right: .5rem;
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+.prefix {
+    padding-right: .25rem;
+    display: inline-block;
+}
+
+.postfix {
+    padding-left: .25rem;
 }
